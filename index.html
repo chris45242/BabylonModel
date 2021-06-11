@@ -17,10 +17,16 @@
         <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
         <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
         <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
-        <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+        <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>    
         <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
         <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
         <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+        
+        <!-- Text to speech Dependency -->
+        <script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.923.0.min.js"></script>
+    
+        <!-- Host Build File -->
+        <script type="text/javascript" src="../dist/host.babylon.js"></script>
 
         <style>
             html, body {
@@ -61,6 +67,7 @@
               -webkit-animation: spin 2s linear infinite;
               animation: spin 2s linear infinite;
               position: fixed;
+              top: 180px;
             }
 
             @-webkit-keyframes spin {
@@ -80,24 +87,62 @@
                 transform: rotate(360deg);
               }
             }
+            
+            #textToSpeech{
+                margin-left: 330px;
+                
+            }
         </style>
     </head>
 <body>
     <canvas id="renderCanvas"></canvas>
-    <script src="./babylonScene.js"></script>
+    <!--<script src="./babylonScene.js"></script>-->
     
     <!-- Text to speech Dependency -->
-    <script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.923.0.min.js"></script>
+    <!--<script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.923.0.min.js"></script>-->
     
     <!-- BabylonJS Dependencies -->
-    <script src="https://preview.babylonjs.com/babylon.js"></script>
-    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script> 
+    <!--<script src="https://preview.babylonjs.com/babylon.js"></script>
+   <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>-->
     
     <!-- Host Build File -->
-    <script type="text/javascript" src="../dist/host.babylon.js"></script>
+    <!--<script type="text/javascript" src="../dist/host.babylon.js"></script>-->
     
     <div id="loadScreen">
         <div id="loader"></div>
     </div>
+    
+    <!--Text to speech controls-->
+    <div id="textToSpeech">
+        <button class="tab current" onclick="toggleHost(event)">Casi</button>
+        <div>
+            <textarea autofocus rows="4" cols="30" class="textEntry Casi">
+                <speak>
+                    <amazon:domain name="conversational">
+                        Hello, my name is Casi. I used to only be a host inside Amazon Sumerian, but
+                        now you can use me in other Javascript runtime environments like Babylon js. Right now,
+                        <mark name='{"feature":"PointOfInterestFeature","method":"setTargetByName","args":["char:gaze"]}' />
+                        my friend and I here are in Babylon js.
+                  </amazon:domain>
+                </speak>
+            </textarea>
+        </div>
+        <div>
+            <button id="play" class="speechButton">Play</button>
+            <button id="pause" class="speechButton">Pause</button>
+            <button id="resume" class="speechButton">Resume</button>
+            <button id="stop" class="speechButton">Stop</button>
+          </div>
+          <div>
+            <button id="gestures" class="gestureButton">Generate Gestures</button>
+          </div>
+          <div>
+            <select id="emotes" class="gestureButton"></select>
+          </div>
+          <div>
+            <button id="playEmote" class="gestureButton">Play Emote</button>
+          </div>
+    </div>
+    
 </body>
 </html>
