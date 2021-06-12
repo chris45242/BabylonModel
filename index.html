@@ -68,6 +68,7 @@
               animation: spin 2s linear infinite;
               position: fixed;
               top: 180px;
+              display: none;
             }
 
             @-webkit-keyframes spin {
@@ -90,13 +91,14 @@
             
             #textToSpeech{
                 margin-left: 330px;
+                display: none;
                 
             }
         </style>
     </head>
 <body>
     <canvas id="renderCanvas"></canvas>
-    <!--<script src="./babylonScene.js"></script>-->
+    <script src="./babylonScene.js"></script>
     
     <!-- Text to speech Dependency -->
     <!--<script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.923.0.min.js"></script>-->
@@ -108,12 +110,54 @@
     <!-- Host Build File -->
     <!--<script type="text/javascript" src="../dist/host.babylon.js"></script>-->
     
-    <div id="loadScreen">
+    <!--<div id="loadScreen">
         <div id="loader"></div>
-    </div>
+    </div>-->
     
     <!--Text to speech controls-->
-    <div id="textToSpeech">
+    <div id="textToSynth">
+      <input autofocus size="23" type="text" id="textEntry" value="It's very good to meet you."/>
+      <button class="btn default" onClick="speakText()">Synthesize</button>
+      <p id="result">Enter text above then click Synthesize</p>
+    </div>
+     <audio id="audioPlayback" controls>
+      <source id="audioSource" type="audio/mp3" src="">
+    </audio>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.410.0.min.js"></script>
+    <script type="text/javascript">
+        // Initialize the Amazon Cognito credentials provider
+        AWS.config.region = 'us-east-1';
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({IdentityPoolId: 'us-east-1:abf85ce5-6157-43df-97f9-471e86d2f9d5'});
+
+        // Function invoked by button click
+        function speakText() {
+            // Create the JSON parameters for getSynthesizeSpeechUrl
+            var speechParams = {
+                OutputFormat: "mp3",
+                SampleRate: "16000",
+                Text: "",
+                TextType: "text",
+                VoiceId: "Joanna"
+            };
+            speechParams.Text = document.getElementById("textEntry").value;
+
+            // Create the Polly service object and presigner object
+            var polly = new AWS.Polly({apiVersion: '2016-06-10'});
+            var signer = new AWS.Polly.Presigner(speechParams, polly)
+
+            // Create presigned URL of synthesized speech file
+            signer.getSynthesizeSpeechUrl(speechParams, function(error, url) {
+            if (error) {
+                document.getElementById('result').innerHTML = error;
+            } else {
+                document.getElementById('audioSource').src = url;
+                document.getElementById('audioPlayback').load();
+                document.getElementById('result').innerHTML = "Speech ready to play.";
+            }
+          });
+        }
+    </script>
+    <!--<div id="textToSpeech">
         <button class="tab current" onclick="toggleHost(event)">Casi</button>
         <div>
             <textarea autofocus rows="4" cols="30" class="textEntry Casi">
@@ -142,7 +186,73 @@
           <div>
             <button id="playEmote" class="gestureButton">Play Emote</button>
           </div>
-    </div>
+    </div>-->
     
+    <!--Create the BabylonJS Scene -->
+    <script>
+        //Initialize global variables
+       // const speakers = new Map([
+         //   ['Casi', undefined],
+          //]);
+
+          //main();
+          
+          //Initialize AWS and create Polly service objects
+          /*-async function main(){
+            window.AWS.config.region = 'us-east-1';
+            window.AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+              IdentityPoolId: 'us-east-1:abf85ce5-6157-43df-97f9-471e86d2f9d5',
+            });
+            
+            //Initializing the host TextToSpeechFeature
+            const polly = new AWS.Polly();
+            const presigner = new AWS.Polly.Presigner();
+            const speechInit = HOST.aws.TextToSpeechFeature.initializeService(
+              polly,
+              presigner,
+              window.AWS.VERSION
+            );
+            
+            //Define the gltf assets that will represent the hosts
+            const characterFile1 = 'C:\babylon\babylonJs_sample_server-master\public\amazon-sumerian-hosts\BabylonModel\project.blend1.gltf';
+            const animationPath1 = './assets/glTF/animations/adult_female';
+            const animationFiles = [
+              'stand_idle.glb',
+              'lipsync.glb',
+              'gesture.glb',
+              'emote.glb',
+              'face_idle.glb',
+              'blink.glb',
+              'poi.glb',
+            ];
+            const gestureConfigFile = 'gesture.json';
+            const poiConfigFile = 'poi.json';
+            const audioAttachJoint1 = 'char:def_c_neckB'; // Name of the joint to attach audio to
+            const audioAttachJoint2 = 'char:head';
+            const lookJoint1 = 'char:jx_c_look'; // Name of the joint to use for point of interest target tracking
+            const lookJoint2 = 'char:gaze';
+            const voice1 = 'Joanna'; // Polly voice. Full list of available voices at: https://docs.aws.amazon.com/polly/latest/dg/voicelist.html
+            const voiceEngine = 'neural'; // Neural engine is not available for all voices in all regions: https://docs.aws.amazon.com/polly/latest/dg/NTTS-main.html
+            
+            //Set up BabylonJS Scene and hosts
+            const {scene, camera} = createScene();
+            const {
+                character: character1,
+                clips: clips1,
+                bindPoseOffset: bindPoseOffset1,
+              } = await loadCharacter(
+                scene,
+                characterFile1,
+                animationPath1,
+                animationFiles
+              );
+              character1.position.x = 1.25;
+              character1.rotation.y = -0.5;
+
+
+
+          };*/
+        
+        </script>
 </body>
 </html>
