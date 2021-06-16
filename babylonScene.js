@@ -11,10 +11,7 @@ var createScene = function () {
 	var url;
 	var fileName;
 		
-//-- BoomBox.gltf
-	//url = "https://raw.githubusercontent.com/BabylonJS/Babylon.js/master/Playground/scenes/BoomBox/";
-	//fileName = "BoomBox.gltf";
-        //url='https://raw.githubusercontent.com/bghgary';
+        
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
         fileName = "project.blend1.glb";
           
