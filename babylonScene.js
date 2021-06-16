@@ -17,15 +17,38 @@ var createScene = function () {
         //url='https://raw.githubusercontent.com/bghgary';
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
         fileName = "project.blend1.glb";
-        
+          
         
 	BABYLON.SceneLoader.ImportMesh("", url, fileName, scene, function (newMeshes) {
 		var mesh = newMeshes[0];
-			mesh.position.copyFromFloats(0, 0, 0);
-			mesh.scaling.copyFromFloats(10,10,10);
-			
-		camera.target = mesh;
-		console.log(mesh)
+                /*var scramble = function(data) {
+                    for (index = 0; index < data.length; index ++) {
+                        data[index] += 0.1 * Math.random();
+                    }
+                }*/
+                //var mesh = newMeshes[0].getChildMeshes()[0];
+                //mesh.setParent(null);
+                //newMeshes[0].dispose();                
+			mesh.position.copyFromFloats(0, 0, -5);
+			mesh.scaling.copyFromFloats(1,1,1);
+                /*mesh.updateMeshPositions(scramble);
+                var manager = new BABYLON.MorphTargetManager();
+                mesh.morphTargetManager = manager;
+                
+                var target0 = BABYLON.MorphTarget.FromMesh(mesh, "Casi Smile", 0.25);
+                manager.addTarget(target0);*/
+		//var animations = [];
+                //var morphTarget = mesh.MorphTargetManager.getTarget('Casi Smile');
+                
+		//camera.target = mesh;
+		//console.log(mesh.MorphTargetManager);
+                console.log(mesh);
+                var primitive = scene.getMeshByName("Casi's Body.001_primitive2");
+                console.log("The mesh's name is: " + primitive);
+                //var assetManager = new BABYLON.AssetsManager();
+                //assetManager.onFinish = function(tasks){
+                  //  start();
+                //};
 	});
     return scene;
 };
