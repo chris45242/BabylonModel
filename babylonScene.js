@@ -16,16 +16,19 @@ var createScene = function () {
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
         fileName = "project.blend1.glb";
           
-        //var manager = new BABYLON.MorphTargetManager();
+        var manager = new BABYLON.MorphTargetManager();
         
-	BABYLON.SceneLoader.ImportMesh("", url, fileName, scene, function (newMeshes, particleSystems, skeletons) {
+	BABYLON.SceneLoader.ImportMesh("", url, fileName, scene, function (newMeshes, animationGroups, particleSystems, skeletons) {
 		var mesh = newMeshes[0];
-                var skeleton = skeletons[0];
+                mesh.setEnabled(true);
+                //var skeleton = skeletons[0];
                 camera.setTarget = newMeshes[0];
-                var bone = skeleton.bones[0];
-                assetsManager.onFinish = function(tasks){
-                    console.log(scene.meshes.length);
-                };
+                
+                //var bone = skeleton.bones[0];
+                //console.log(skeleton.bones[2]);
+                //assetsManager.onFinish = function(tasks){
+                  //  console.log(scene.meshes.length);
+                //};
                 /*var scramble = function(data) {
                     for (index = 0; index < data.length; index ++) {
                         data[index] += 0.1 * Math.random();
@@ -39,12 +42,8 @@ var createScene = function () {
                 //mesh.updateMeshPositions(scramble);
                 //var manager = new BABYLON.MorphTargetManager();
                 //var assets = await Scene.loadAsset();
-                mesh.morphTargetManager = manager;
+                //mesh.morphTargetManager = manager;
                 
-                //var target0 = BABYLON.MorphTarget.FromMesh(mesh, "Casi Smile", 0.25);
-                //manager.addTarget(target0);
-		//var animations = [];
-                //var morphTarget = mesh.MorphTargetManager.getTarget('Casi Smile');
                 
 		//camera.target = mesh;
 		//console.log(mesh.MorphTargetManager);
@@ -52,7 +51,26 @@ var createScene = function () {
                 var casiLips = scene.getMeshByName("Casi Body.001_primitive0");
                 var casiInnerMouth = scene.getMeshByName("Casi Body.001_primitive2");
                 var primitive = scene.getMeshByName("Primitives.001");
-                console.log("The mesh's name is: " + primitive);
+                var casiVisor = scene.getMeshByName("Casi's Visor");
+                casiVisor.visibility = -1;
+                scene.stopAllAnimations();
+                var eyebrowBlinkAnim = scene.getAnimationGroupByName('Key.001Action.001');
+                var eyeBlinkAnim = scene.getAnimationGroupByName('KeyAction');
+                scene.animationGroups[0].start(true);
+                scene.animationGroups[1].start(true);
+                //var target0 = BABYLON.MorphTarget.FromMesh(, "Casi primitive", 1.00);
+                //manager.addTarget(target0);
+                console.log("The mesh's name is: " + casiVisor);
+                //scene.morphTargetManager.getTarget("Casi Body.001_primitive0").getPositions();
+                //var myInfluence = mesh.morphTargetManager.getTarget(primitive);
+                //var finalLip = casiLips + sum('Casi Body.001_primitive0' - casiLips) * 1.0000;
+                /*for (i = 0; i < animationGroups.length; i++) {
+                    animationGroups[i].play(true);
+                }*/
+                
+               
+                //var target1 = BABYLON.MorphTarget.FromMesh(casiLips, "Blink Both Eyes", 1.0000);
+                //manager.addTarget(target1);
                 /*var rawData = '';
                 var data = JSON.parse(rawData);
                 var polyCount = 0;
@@ -66,8 +84,37 @@ var createScene = function () {
                 //assetManager.onFinish = function(tasks){
                   //  start();
                 //};
+                var oldgui = document.querySelector("#dataGUI");
+                if(oldgui != null){
+                    oldgui.remove();
+                }
+                
+                var gui = new dat.GUI();
+                gui.domElement.style.marginTop = "100px";
+                gui.domElement.id = "#datGUI";
+                var options = {
+                    influence0: 0.25,
+                    influence1: 0.25,
+                    influence2: 0.25,
+                    influence3: 0.25
+                };
+                
+                /*gui.add(options, "influence0", 0, 1).onChange(function(value){
+                    target0.influence = value;
+                
+                
+                scene.beginAnimation("Casi Body.001_primitive0", 0, 1, true);
+                });*/
+                
+                
+                //var keyFrames = [];
+                
+                //keyFrames.push({});
+                
                 assetsManager.load();
 	});
+        //Meshes -> extras -> targetName
+        
     return scene;
 };
 
