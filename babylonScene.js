@@ -14,7 +14,7 @@ var createScene = function () {
 	var fileName;
         
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
-        fileName = "project.blend1.glb";
+        fileName = "project.blend1.gltf";
           
         var manager = new BABYLON.MorphTargetManager();
         
@@ -47,20 +47,42 @@ var createScene = function () {
                 
 		//camera.target = mesh;
 		//console.log(mesh.MorphTargetManager);
-                console.log(mesh.morphTargetManager);
+                //console.log(casiLips.morphTargetManager);
                 var casiLips = scene.getMeshByName("Casi Body.001_primitive0");
                 var casiInnerMouth = scene.getMeshByName("Casi Body.001_primitive2");
                 var primitive = scene.getMeshByName("Primitives.001");
                 var casiVisor = scene.getMeshByName("Casi's Visor");
+                var loaderMat = new BABYLON.NodeMaterial("loaderMat", scene, { emitComments: false });
+                var casiMouth = [scene.getMeshByName("Casi Body.001_primitive0"), scene.getMeshByName("Casi Body.001_primitive2")];
+                var meshInfluence = [];
+                //console.log(casiLips.morphTargetManager);
+                /*meshInfluence.push(casiLips.morphTargetManager.getTarget(11));
+                meshInfluence.push(casiLips.morphTargetManager.getTarget(12));
+                meshInfluence.push(casiLips.morphTargetManager.getTarget(13));
+                meshInfluence.push(casiLips.morphTargetManager.getTarget(14));
+                meshInfluence.push(casiLips.morphTargetManager.getTarget(15));
+                meshInfluence.push(casiLips.morphTargetManager.getTarget(16));*/
+                
+                /*casiMouth.forEach(mesh => {
+                        mesh.material = loaderMat
+                                if(mesh.morphTargetManager != null){
+                                    meshInfluence.push(mesh.morphTargetManager.getTarget(0));
+                                }
+                           });*/
                 casiVisor.visibility = -1;
                 scene.stopAllAnimations();
                 var eyebrowBlinkAnim = scene.getAnimationGroupByName('Key.001Action.001');
                 var eyeBlinkAnim = scene.getAnimationGroupByName('KeyAction');
-                scene.animationGroups[0].start(true);
-                scene.animationGroups[1].start(true);
-                //var target0 = BABYLON.MorphTarget.FromMesh(, "Casi primitive", 1.00);
+                eyebrowBlinkAnim.start(true);
+                eyeBlinkAnim.start(true);
+                var morphAnimations = {
+                    
+                };
+                //scene.animationGroups[0].start(true);
+                //scene.animationGroups[1].start(true);
+                //var target0 = BABYLON.MorphTarget.FromMesh(casiLips, "Casi Body.001_primitive0", 1.00);
                 //manager.addTarget(target0);
-                console.log("The mesh's name is: " + casiVisor);
+                console.log("The mesh's name is: " + casiLips.morphTargetManager);
                 //scene.morphTargetManager.getTarget("Casi Body.001_primitive0").getPositions();
                 //var myInfluence = mesh.morphTargetManager.getTarget(primitive);
                 //var finalLip = casiLips + sum('Casi Body.001_primitive0' - casiLips) * 1.0000;
@@ -84,7 +106,7 @@ var createScene = function () {
                 //assetManager.onFinish = function(tasks){
                   //  start();
                 //};
-                var oldgui = document.querySelector("#dataGUI");
+                /*var oldgui = document.querySelector("#dataGUI");
                 if(oldgui != null){
                     oldgui.remove();
                 }
@@ -99,11 +121,11 @@ var createScene = function () {
                     influence3: 0.25
                 };
                 
-                /*gui.add(options, "influence0", 0, 1).onChange(function(value){
+                gui.add(options, "influence0", 0, 1).onChange(function(value){
                     target0.influence = value;
                 
                 
-                scene.beginAnimation("Casi Body.001_primitive0", 0, 1, true);
+                //scene.beginAnimation("Casi Body.001_primitive0", 0, 1, true);
                 });*/
                 
                 
