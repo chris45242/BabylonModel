@@ -72,7 +72,11 @@ var createScene = function () {
                 casiVisor.visibility = -1;
                 scene.stopAllAnimations();
                 var eyebrowBlinkAnim = scene.getAnimationGroupByName('Key.001Action.001');
+                eyebrowBlinkAnim.goToFrame(2);
                 var eyeBlinkAnim = scene.getAnimationGroupByName('KeyAction');
+                eyeBlinkAnim.goToFrame(6);
+                //console.log(eyeBlinkAnim.animatables());
+                //var eyeBlinkAnim = scene.getAnimationGroupByName("KeyAction").getTarget("2");
                 eyebrowBlinkAnim.start(true);
                 eyeBlinkAnim.start(true);
                 var morphAnimations = {
