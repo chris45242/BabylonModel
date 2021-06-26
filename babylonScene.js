@@ -14,7 +14,7 @@ var createScene = function () {
 	var fileName;
         
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
-        fileName = "project.blend1.gltf";
+        fileName = "project.blend1.glb";
           
         var manager = new BABYLON.MorphTargetManager();
         
@@ -72,11 +72,10 @@ var createScene = function () {
                 casiVisor.visibility = -1;
                 scene.stopAllAnimations();
                 var eyebrowBlinkAnim = scene.getAnimationGroupByName('Key.001Action.001');
-                eyebrowBlinkAnim.goToFrame(2);
                 var eyeBlinkAnim = scene.getAnimationGroupByName('KeyAction');
-                eyeBlinkAnim.goToFrame(6);
                 //console.log(eyeBlinkAnim.animatables());
                 //var eyeBlinkAnim = scene.getAnimationGroupByName("KeyAction").getTarget("2");
+                
                 eyebrowBlinkAnim.start(true);
                 eyeBlinkAnim.start(true);
                 var morphAnimations = {
@@ -110,12 +109,22 @@ var createScene = function () {
                 //assetManager.onFinish = function(tasks){
                   //  start();
                 //};
-                /*var oldgui = document.querySelector("#dataGUI");
+                //var target0 = new BABYLON.MorphTarget.FromMesh(Casi's)
+                
+                var oldgui = document.querySelector("#dataGUI");
                 if(oldgui != null){
                     oldgui.remove();
                 }
                 
-                var gui = new dat.GUI();
+                 var options = {
+                    title:"Bone Scaling!", 
+                    };
+
+                gui = new dat.GUI();	
+                gui.domElement.style.marginTop = "100px";
+                gui.domElement.id = "datGUI";
+                gui.add(options, 'title');
+                /*var gui = new dat.GUI();
                 gui.domElement.style.marginTop = "100px";
                 gui.domElement.id = "#datGUI";
                 var options = {
@@ -123,14 +132,26 @@ var createScene = function () {
                     influence1: 0.25,
                     influence2: 0.25,
                     influence3: 0.25
-                };
+                };*/
                 
                 gui.add(options, "influence0", 0, 1).onChange(function(value){
-                    target0.influence = value;
+                            target0.influence = value;
                 
+                gui.add(options, "influence1", 0, 1).onChange(function(value) {
+                            target1.influence = value;
+                });
+
+                gui.add(options, "influence2", 0, 1).onChange(function(value) {
+                            target2.influence = value;
+                });  
+
+                gui.add(options, "influence3", 0, 1).onChange(function(value) {
+                            target3.influence = value;
+                });        
+
                 
                 //scene.beginAnimation("Casi Body.001_primitive0", 0, 1, true);
-                });*/
+                });
                 
                 
                 //var keyFrames = [];
