@@ -16,13 +16,33 @@ var createScene = function () {
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
         fileName = "project.blend1.glb";
           
-        var manager = new BABYLON.MorphTargetManager();
+        //var manager = new BABYLON.MorphTargetManager();
         
-	BABYLON.SceneLoader.ImportMesh("", url, fileName, scene, function (newMeshes, animationGroups, particleSystems, skeletons) {
-		var mesh = newMeshes[0];
+        /*var casiImportResult = new BABYLON.SceneLoader.ImportMeshAsync("", url, fileName, scene);
+        casiImportResult.meshes[0].name = "metarig";
+        
+        camera.setTarget = casiImportResult;*/
+	var casiImportResult = BABYLON.SceneLoader.ImportMeshAsync("", url, fileName, scene, function (newMeshes, animationGroups, particleSystems, skeletons) {
+		//Remove the top level root node.
+                //casiImportResult.makeGeometryUnique();
+                /*var casi = casiImportResult.meshes[0];
+                casi.setParent(null);
+                casiImportResult.meshes[0].dispose();*/
+                
+                var mesh = newMeshes[0];
+                camera.setTarget(mesh);
                 mesh.setEnabled(true);
+                
+                mesh.position.copyFromFloats(0, 0, -5);
+		mesh.scaling.copyFromFloats(1,1,1);
+                mesh.rotation = new BABYLON.Vector3(3, 4, 3);
+                
+                
+                /*var casi = casiImportResult.newMeshes[0].getChildren()[0];
+                casi.setParent(null);
+                casiImportResult.newMeshes[0].dispose();*/
                 //var skeleton = skeletons[0];
-                camera.setTarget = newMeshes[0];
+                
                 
                 //var bone = skeleton.bones[0];
                 //console.log(skeleton.bones[2]);
@@ -37,8 +57,7 @@ var createScene = function () {
                 //var mesh = newMeshes[0].getChildMeshes()[0];
                 //mesh.setParent(null);
                 //newMeshes[0].dispose();                
-		mesh.position.copyFromFloats(0, 0, -5);
-		mesh.scaling.copyFromFloats(1,1,1);
+		
                 //mesh.updateMeshPositions(scramble);
                 //var manager = new BABYLON.MorphTargetManager();
                 //var assets = await Scene.loadAsset();
@@ -81,8 +100,8 @@ var createScene = function () {
                 var morphAnimations = {
                     
                 };
-                //scene.animationGroups[0].start(true);
-                //scene.animationGroups[1].start(true);
+                scene.animationGroups[0].start(true);
+                scene.animationGroups[1].start(true);
                 //var target0 = BABYLON.MorphTarget.FromMesh(casiLips, "Casi Body.001_primitive0", 1.00);
                 //manager.addTarget(target0);
                 console.log("The mesh's name is: " + casiLips.morphTargetManager);
@@ -124,15 +143,6 @@ var createScene = function () {
                 gui.domElement.style.marginTop = "100px";
                 gui.domElement.id = "datGUI";
                 gui.add(options, 'title');
-                /*var gui = new dat.GUI();
-                gui.domElement.style.marginTop = "100px";
-                gui.domElement.id = "#datGUI";
-                var options = {
-                    influence0: 0.25,
-                    influence1: 0.25,
-                    influence2: 0.25,
-                    influence3: 0.25
-                };*/
                 
                 gui.add(options, "influence0", 0, 1).onChange(function(value){
                             target0.influence = value;
@@ -167,9 +177,7 @@ var createScene = function () {
 
 var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
 
-
 var scene = createScene();
-
 
    engine.runRenderLoop(function () {
 	if (scene) {
