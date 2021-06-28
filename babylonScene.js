@@ -1,7 +1,8 @@
 var canvas = document.getElementById("renderCanvas");
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
-    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+    //var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+    var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / -2, 1, 3, new BABYLON.Vector3(0, 3, 0), scene);
 		camera.attachControl(canvas, true);
     var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
 		light.intensity = 0.7;
@@ -16,26 +17,28 @@ var createScene = function () {
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
         fileName = "project.blend1.glb";
           
+        
         //var manager = new BABYLON.MorphTargetManager();
         
         /*var casiImportResult = new BABYLON.SceneLoader.ImportMeshAsync("", url, fileName, scene);
         casiImportResult.meshes[0].name = "metarig";
         
         camera.setTarget = casiImportResult;*/
-	var casiImportResult = BABYLON.SceneLoader.ImportMeshAsync("", url, fileName, scene, function (newMeshes, animationGroups, particleSystems, skeletons) {
-		//Remove the top level root node.
-                //casiImportResult.makeGeometryUnique();
-                /*var casi = casiImportResult.meshes[0];
-                casi.setParent(null);
-                casiImportResult.meshes[0].dispose();*/
+	BABYLON.SceneLoader.ImportMeshAsync("", url, fileName, scene, function (newMeshes, animationGroups, particleSystems, skeletons) {
+		var casi = newMeshes[0];
+                var skeleton = skeletons[0];
+                //var mesh = newMeshes[1];
                 
-                var mesh = newMeshes[0];
-                camera.setTarget(mesh);
+               
+                //mesh.setEnabled(true);
+                
+                /*var mesh = casiImportResult;
                 mesh.setEnabled(true);
                 
-                mesh.position.copyFromFloats(0, 0, -5);
+                mesh.position.copyFromFloats(0, 0, 5);
 		mesh.scaling.copyFromFloats(1,1,1);
-                mesh.rotation = new BABYLON.Vector3(3, 4, 3);
+                camera.setTarget(mesh);*/
+                //mesh.rotation = new BABYLON.Vector3(3, 4, 3);
                 
                 
                 /*var casi = casiImportResult.newMeshes[0].getChildren()[0];
@@ -71,8 +74,8 @@ var createScene = function () {
                 var casiInnerMouth = scene.getMeshByName("Casi Body.001_primitive2");
                 var primitive = scene.getMeshByName("Primitives.001");
                 var casiVisor = scene.getMeshByName("Casi's Visor");
-                var loaderMat = new BABYLON.NodeMaterial("loaderMat", scene, { emitComments: false });
-                var casiMouth = [scene.getMeshByName("Casi Body.001_primitive0"), scene.getMeshByName("Casi Body.001_primitive2")];
+                //var loaderMat = new BABYLON.NodeMaterial("loaderMat", scene, { emitComments: false });
+                //var casiMouth = [scene.getMeshByName("Casi Body.001_primitive0"), scene.getMeshByName("Casi Body.001_primitive2")];
                 var meshInfluence = [];
                 //console.log(casiLips.morphTargetManager);
                 /*meshInfluence.push(casiLips.morphTargetManager.getTarget(11));
@@ -130,7 +133,7 @@ var createScene = function () {
                 //};
                 //var target0 = new BABYLON.MorphTarget.FromMesh(Casi's)
                 
-                var oldgui = document.querySelector("#dataGUI");
+                /*var oldgui = document.querySelector("#dataGUI");
                 if(oldgui != null){
                     oldgui.remove();
                 }
@@ -157,18 +160,18 @@ var createScene = function () {
 
                 gui.add(options, "influence3", 0, 1).onChange(function(value) {
                             target3.influence = value;
-                });        
+                });*/        
 
                 
                 //scene.beginAnimation("Casi Body.001_primitive0", 0, 1, true);
-                });
+                //});
                 
                 
                 //var keyFrames = [];
                 
                 //keyFrames.push({});
                 
-                assetsManager.load();
+                //assetsManager.load();
 	});
         //Meshes -> extras -> targetName
         
