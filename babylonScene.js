@@ -16,8 +16,8 @@ var createScene = function () {
 	var fileName;
         
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
-        fileName = "project.blend1.glb";
-          
+        //fileName = "project.blend1.gltf";
+        fileName = "scene(1).babylon";  
         
         //var manager = new BABYLON.MorphTargetManager();
         
@@ -25,7 +25,8 @@ var createScene = function () {
         casiImportResult.meshes[0].name = "metarig";
         
         camera.setTarget = casiImportResult;*/
-    
+        
+        
         var createButton = function(group, panel) {
 	var button = BABYLON.GUI.Button.CreateSimpleButton("button", group.name);
 	button.paddingTop = "10px";
@@ -42,14 +43,19 @@ var createScene = function () {
 	});
 	panel.addControl(button); 
     }
-	BABYLON.SceneLoader.ImportMesh("", url, fileName, scene, function (meshes, animationGroups, particleSystems, skeletons){ 
-		//var casi = newMeshes[0];
-                scene.stopAllAnimations();
+	/*var casiImportResult =*/ BABYLON.SceneLoader.ImportMesh("", url, fileName, scene, function (meshes, animationGroups, particleSystems, skeletons){ 
+		var casi = meshes[0].getChildMeshes()[0];
+                casi.setParent(null);
+                //meshes[0].dispose();
+                //casiImportResult
+                //casi.scaling.scaleInPlace(0,1);
+                
+                //scene.stopAllAnimations();
                 
                 /*animationGroups.forEach(function(animationGroup){
                     animationGroup.play(true);
-                });
-                scene*/
+                });*/
+                //scene
                 //Enable animation blending for all animations
                 scene.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
                 scene.animationPropertiesOverride.enableBlending = true;
@@ -67,21 +73,27 @@ var createScene = function () {
                 advancedTexture.addControl(UiPanel);
                 
                 //Animation Groups
-                for (var index = 0; index < scene.animationGroups.length; index++) {
+                /*for (var index = 0; index < scene.animationGroups.length; index++) {
 			var group = scene.animationGroups[index];
 			// Create a button per group
 			createButton(group, UiPanel);
-		}
+		}*/
 
-		scene.animationGroups[0].start(true);  
-		currentGroup = scene.animationGroups[0];
+		//scene.animationGroups[0].start(true); 
+                //scene.animationGroups[1].start(true);
+                //var keyAction = scene.getAnimationGroupByName("KeyAction");
+                var key001Action001 = scene.getAnimationGroupByName("Key.001Action.001");
+                scene.stopAllAnimations();
+                keyAction.start(true, 1.0, keyAction.from, keyAction.to, false);
+                key001Action001.start(true, 1.0, key001Action001.from, key001Action001.to, false);
+		//currentGroup = scene.animationGroups[0];
 
                 var casiLips = scene.getMeshByName("Casi Body.001_primitive0");
                 var casiInnerMouth = scene.getMeshByName("Casi Body.001_primitive2");
                 var primitive = scene.getMeshByName("Primitives.001");
                 var casiVisor = scene.getMeshByName("Casi's Visor");
                 var meshInfluence = [];
-                //scene.beginAnimation("Follow Both Eye Blink", 0, 60, true);
+                
                 assetsManager.load();
 	});
         
