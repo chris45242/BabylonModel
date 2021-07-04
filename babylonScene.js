@@ -98,11 +98,50 @@ var createScene = function () {
 		//currentGroup = scene.animationGroups[0];
 
                 var casiLips = scene.getMeshByName("Casi's Body.001_primitive0");
-                //var casiBody = scene.getMeshByName("Casi")
                 var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
                 var primitive = scene.getMeshByName("Primitives.001");
+                var casiTeeth = scene.getMeshByName("Casi's Teeth");
                 var casiVisor = scene.getMeshByName("Casi's Visor");
                 var casiLipsPosition = casiLips.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+                casiLips.setVerticesData(BABYLON.VertexBuffer.PositionKind, casiLipsPosition, true);
+                //casiLips.updateVerticesData(BABYLON.VertexBuffer.PositionKind, casiLipsPosition);
+                var primitivePosition = primitive.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+                primitive.setVerticesData(BABYLON.VertexBuffer.PositionKind, primitivePosition, true);
+                
+                var casiInnerMouthPosition = casiInnerMouth.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+                casiInnerMouth.setVerticesData(BABYLON.VertexBuffer.PositionKind, casiInnerMouthPosition, true);
+                //casiInnerMouth.updateVerticesData(BABYLON.VertexBuffer.PositionKind, casiInnerMouthPosition);
+                
+                //Gets O shape keys from all parts of the mouth including the primitive and writes them to console
+                console.log(casiInnerMouth.morphTargetManager.getTarget(11));
+                console.log(primitive.morphTargetManager.getTarget(2));
+                console.log(casiLips.morphTargetManager.getTarget(11));
+                
+                //Gets A shape keys from all parts of the mouth including the primitive and writes them to console
+                console.log(casiInnerMouth.morphTargetManager.getTarget(12));
+                console.log(primitive.morphTargetManager.getTarget(3));
+                console.log(casiLips.morphTargetManager.getTarget(12));
+                
+                //Gets U shape keys from all parts of the mouth including the primitive and writes them to console
+                console.log(casiInnerMouth.morphTargetManager.getTarget(13));
+                console.log(primitive.morphTargetManager.getTarget(4));
+                console.log(casiLips.morphTargetManager.getTarget(13));
+                
+                //Gets E shape keys from all parts of the mouth including the primitive and writes them to console
+                console.log(casiInnerMouth.morphTargetManager.getTarget(14));
+                console.log(primitive.morphTargetManager.getTarget(5));
+                console.log(casiLips.morphTargetManager.getTarget(14));
+                
+                //Gets I shape keys from all parts of the mouth including the primitive and writes them to console
+                console.log(casiInnerMouth.morphTargetManager.getTarget(15));
+                console.log(primitive.morphTargetManager.getTarget(6));
+                console.log(casiLips.morphTargetManager.getTarget(15));
+                
+                //Gets FV shape keys from all parts of the mouth including the primitive and writes them to console
+                console.log(casiInnerMouth.morphTargetManager.getTarget(16));
+                console.log(primitive.morphTargetManager.getTarget(7));
+                console.log(casiLips.morphTargetManager.getTarget(16));
+                
                 console.log(casiLipsPosition);
              //skeleton.bones[2].computeAbsoluteTransforms();
              //var mat = skeleton.bones[2].getWorldMatrix();
