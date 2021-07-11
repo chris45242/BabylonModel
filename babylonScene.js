@@ -1,14 +1,18 @@
 var canvas = document.getElementById("renderCanvas");
 var currentGroup;
+ 
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
+    //var hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("textures/environment.dds", scene);
+    //var currentSkybox = scene.createDefaultSkybox(hdrTexture, true);
     //var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
     var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / -2, 1, 3, new BABYLON.Vector3(0, 3, 0), scene);
 		camera.attachControl(canvas, true);
+                //camera.position = new BABYLON.Vector3(0, 50, -40);
     var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
 		light.intensity = 0.7;
     var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, scene);
-    var assetsManager = new BABYLON.AssetsManager(scene);
+    //var assetsManager = new BABYLON.AssetsManager(scene);
     var gui;
         
         var scales = [];
@@ -16,10 +20,10 @@ var createScene = function () {
 	var fileName;
         
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
-        fileName = "project.blend1.gltf";
+        fileName = "project.blend1.glb";
         //fileName = "scene.babylon";  
         
-        //var manager = new BABYLON.MorphTargetManager();
+        //var manager = new BABYLON.MorphTargetManager(scene);
         
         /*var casiImportResult = new BABYLON.SceneLoader.ImportMeshAsync("", url, fileName, scene);
         casiImportResult.meshes[0].name = "metarig";
@@ -27,30 +31,36 @@ var createScene = function () {
         camera.setTarget = casiImportResult;*/
         
         
-        var createButton = function(group, panel) {
-	var button = BABYLON.GUI.Button.CreateSimpleButton("button", group.name);
-	button.paddingTop = "10px";
-	button.width = "120px";
-	button.height = "50px";
-	button.color = "white";
-	button.background = "green";
-	button.onPointerDownObservable.add(function() {
-		if (currentGroup) {
-			currentGroup.stop();
-		}
-		group.start(true);
-		currentGroup = group;
-	});
-	panel.addControl(button); 
-    }
+       
+    
+   /* function playAnimation(parameter, animValue, animKeys, group, start){
+        
+        var paraAnim = new BABYLON.Animation("paraAnim", animValue, 60, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+        paraAnim.setKeys(animKeys);
+        if(group !== null){
+            group.addTargetedAnimation(paraAnim, parameter);
+            if(start){
+                group.play(true);
+            }
+        }
+    }*/
+   
+
         /*var model = assetsManager.addMeshTask("model", "", url, fileName);
         assetsManager.onFinish = function(tasks){
             console.log(scene.meshes.length);
             sphere = scene.meshes[0];
         };*/
-	/*var casiImportResult =*/ BABYLON.SceneLoader.ImportMesh("", url, fileName, scene, function (meshes, animationGroups, particleSystems, skeletons){ 
-		var casi = meshes[0];
-                casi.setParent(null);
+	//BABYLON.SceneLoader.ImportMesh("", url, fileName, scene, function (meshes, animationGroups, particleSystems, skeletons){
+        BABYLON.SceneLoader.Append(url, fileName, scene, function (scene){
+                // Create a default arc rotate camera and light.
+                scene.createDefaultCameraOrLight(true, true, true);
+                scene.activeCamera.alpha += Math.PI;
+            
+           
+		//var casi = meshes[0];
+                //casi.setParent(null);
+                //casi.morphTargetManager = manager;
                 //var skeleton, casi;
                 //skeleton = skeletons[0];
                 //meshes[0].dispose();
@@ -64,20 +74,20 @@ var createScene = function () {
                 });*/
                 //scene
                 //Enable animation blending for all animations
-                scene.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
+                /*scene.animationPropertiesOverride = new BABYLON.AnimationPropertiesOverride();
                 scene.animationPropertiesOverride.enableBlending = true;
                 scene.animationPropertiesOverride.blendingSpeed = 0.02;
-                scene.animationPropertiesOverride.loopMode = 1;
+                scene.animationPropertiesOverride.loopMode = 1;*/
                 
                 //UI
-                var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+                /*var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
                 advancedTexture.renderScale = 0.5;
                 var UiPanel = new BABYLON.GUI.StackPanel();
                 UiPanel.width = "220px";
                 UiPanel.fontSize = "14px";
                 UiPanel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
                 UiPanel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-                advancedTexture.addControl(UiPanel);
+                advancedTexture.addControl(UiPanel);*/
                 
                 //Animation Groups
                 /*for (var index = 0; index < scene.animationGroups.length; index++) {
@@ -90,77 +100,40 @@ var createScene = function () {
                 scene.animationGroups[1].start(true);
                 //var keyAction = scene.getAnimationGroupByName("KeyAction");
                 //var key001Action001 = scene.getAnimationGroupByName("Key.001Action.001");
-                //var key002Action = scene.getAnimationGroupByName("Key.002Action");
+                
                 //scene.stopAllAnimations();
                 //keyAction.start(true, 1.0, keyAction.from, keyAction.to, false);
                 //key002Action.start(true, 1.0, key002Action.from, key002Action.to, false);
                 //key001Action001.start(true, 1.0, key001Action001.from, key001Action001.to, false);
 		//currentGroup = scene.animationGroups[0];
 
-                var casiLips = scene.getMeshByName("Casi's Body.001_primitive0");
-                var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
+                var casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
+                //var clonedCasiLips = casiLips.clone("Casi's Body.001_primitive0_clone");
+                ///clonedCasiLips.setEnabled(false);
+                //clonedCasiLips.updateMeshPositions(scrambleUp);
+                /*var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
+                casiInnerMouth.setEnabled(false);
+                var clonedCasiInnerMouth = casiInnerMouth.clone("Casi's Body.001_primitive2_clone");
+                clonedCasiInnerMouth.setEnabled(false);
+                //clonedCasiInnerMouth.updateMeshPostions(scrambleUp);
                 var primitive = scene.getMeshByName("Primitives.001");
-                var casiTeeth = scene.getMeshByName("Casi's Teeth");
+                var casiEyes = scene.getMeshByName("Casi's Body.001_primitive1");
+                var casiTeeth = scene.getMeshByName("Casi's Teeth");*/
                 var casiVisor = scene.getMeshByName("Casi's Visor");
-                var casiLipsPosition = casiLips.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-                casiLips.setVerticesData(BABYLON.VertexBuffer.PositionKind, casiLipsPosition, true);
-                //casiLips.updateVerticesData(BABYLON.VertexBuffer.PositionKind, casiLipsPosition);
-                var primitivePosition = primitive.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-                primitive.setVerticesData(BABYLON.VertexBuffer.PositionKind, primitivePosition, true);
+                casiVisor.setEnabled(false);
+
+                let t = 0;
+                scene.onBeforeRenderObservable.add(() => {
+                //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
+                casiBody.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
+                //casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.cos(t));
+                t += 0.07;
+            });
+
                 
-                var casiInnerMouthPosition = casiInnerMouth.getVerticesData(BABYLON.VertexBuffer.PositionKind);
-                casiInnerMouth.setVerticesData(BABYLON.VertexBuffer.PositionKind, casiInnerMouthPosition, true);
-                //casiInnerMouth.updateVerticesData(BABYLON.VertexBuffer.PositionKind, casiInnerMouthPosition);
-                
-                //Gets O shape keys from all parts of the mouth including the primitive and writes them to console
-                console.log(casiInnerMouth.morphTargetManager.getTarget(11));
-                console.log(primitive.morphTargetManager.getTarget(2));
-                console.log(casiLips.morphTargetManager.getTarget(11));
-                
-                //Gets A shape keys from all parts of the mouth including the primitive and writes them to console
-                console.log(casiInnerMouth.morphTargetManager.getTarget(12));
-                console.log(primitive.morphTargetManager.getTarget(3));
-                console.log(casiLips.morphTargetManager.getTarget(12));
-                
-                //Gets U shape keys from all parts of the mouth including the primitive and writes them to console
-                console.log(casiInnerMouth.morphTargetManager.getTarget(13));
-                console.log(primitive.morphTargetManager.getTarget(4));
-                console.log(casiLips.morphTargetManager.getTarget(13));
-                
-                //Gets E shape keys from all parts of the mouth including the primitive and writes them to console
-                console.log(casiInnerMouth.morphTargetManager.getTarget(14));
-                console.log(primitive.morphTargetManager.getTarget(5));
-                console.log(casiLips.morphTargetManager.getTarget(14));
-                
-                //Gets I shape keys from all parts of the mouth including the primitive and writes them to console
-                console.log(casiInnerMouth.morphTargetManager.getTarget(15));
-                console.log(primitive.morphTargetManager.getTarget(6));
-                console.log(casiLips.morphTargetManager.getTarget(15));
-                
-                //Gets FV shape keys from all parts of the mouth including the primitive and writes them to console
-                console.log(casiInnerMouth.morphTargetManager.getTarget(16));
-                console.log(primitive.morphTargetManager.getTarget(7));
-                console.log(casiLips.morphTargetManager.getTarget(16));
-                
-                console.log(casiLipsPosition);
-             //skeleton.bones[2].computeAbsoluteTransforms();
-             //var mat = skeleton.bones[2].getWorldMatrix();
-            // skeleton.bones[2].updateMatrix(mat);
-            // skeleton.bones[2]._updateDifferenceMatrix();
-            
-             
-		
-	//});
-                //casiLips.morphTargetManager.removeTarget(0);
-               //var myInfluence = casiLips.morphTargetManager.getTarget(12);
-               //myInfluence = casiLips + 1.0;
-                //casiLips.morphTargetManager.getTarget(12).influence = 1.00;
-                
-                //var meshInfluence = [];
-                
-                //assetsManager.load();
+               
 	});
-    assetsManager.load();
+    //assetsManager.load();
     return scene;
 };
 
@@ -175,6 +148,6 @@ var scene = createScene();
 });
 
 // Resize
-window.addEventListener("resize", function () {
+/*window.addEventListener("resize", function () {
 	engine.resize();
-});
+});*/
