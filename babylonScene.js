@@ -119,12 +119,15 @@ var createScene = function () {
                 var primitive = scene.getMeshByName("Primitives.001");
                 var casiEyes = scene.getMeshByName("Casi's Body.001_primitive1");
                 var casiTeeth = scene.getMeshByName("Casi's Teeth");*/
+                var primitive = scene.getMeshByName("Primitives.001");
                 var casiVisor = scene.getMeshByName("Casi's Visor");
                 casiVisor.setEnabled(false);
 
+                //Set up Morph Targets for Casi before the screen is done loading.
                 let t = 0;
                 scene.onBeforeRenderObservable.add(() => {
                 //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
+                primitive.morphTargetManager.getTarget(2).influence = Math.abs(Math.sin(t));
                 casiBody.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
                 //casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.cos(t));
                 t += 0.07;
