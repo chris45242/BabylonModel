@@ -4,6 +4,7 @@ var currentGroup;
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
     //var hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("textures/environment.dds", scene);
+    //var hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("Cyber_Background.jpg", scene);
     //var currentSkybox = scene.createDefaultSkybox(hdrTexture, true);
     //var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
     var camera = new BABYLON.ArcRotateCamera("camera1", Math.PI / -2, 1, 3, new BABYLON.Vector3(0, 3, 0), scene);
@@ -111,8 +112,8 @@ var createScene = function () {
                 //var clonedCasiLips = casiLips.clone("Casi's Body.001_primitive0_clone");
                 ///clonedCasiLips.setEnabled(false);
                 //clonedCasiLips.updateMeshPositions(scrambleUp);
-                /*var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
-                casiInnerMouth.setEnabled(false);
+                var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
+                /*casiInnerMouth.setEnabled(false);
                 var clonedCasiInnerMouth = casiInnerMouth.clone("Casi's Body.001_primitive2_clone");
                 clonedCasiInnerMouth.setEnabled(false);
                 //clonedCasiInnerMouth.updateMeshPostions(scrambleUp);
@@ -129,6 +130,7 @@ var createScene = function () {
                 //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                 primitive.morphTargetManager.getTarget(2).influence = Math.abs(Math.sin(t));
                 casiBody.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
+                casiInnerMouth.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
                 //casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.cos(t));
                 t += 0.07;
             });
