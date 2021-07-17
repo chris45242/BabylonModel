@@ -13,6 +13,7 @@ var createScene = function () {
     var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
 		light.intensity = 0.7;
     var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, scene);
+    ground.receiveShadows = true;
     var gui;
         
         var scales = [];
@@ -21,7 +22,6 @@ var createScene = function () {
         
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
         fileName = "project.blend1.glb";
-   
    
         BABYLON.SceneLoader.Append(url, fileName, scene, function (scene){
                 // Create a default arc rotate camera and light.
@@ -33,15 +33,18 @@ var createScene = function () {
 		scene.animationGroups[0].start(true); 
                 scene.animationGroups[1].start(true);
 
+                //Get's some of the meshes that are used to make Casi
                 var casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
                 var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
                 /*casiInnerMouth.setEnabled(false);
                 var casiEyes = scene.getMeshByName("Casi's Body.001_primitive1");
                 var casiTeeth = scene.getMeshByName("Casi's Teeth");*/
                 var primitive = scene.getMeshByName("Primitives.001");
+                
+                //Gets Casi's Visor and uses visibility to make it see through glass-like material
                 var casiVisor = scene.getMeshByName("Casi's Visor");
                 casiVisor.setEnabled(true);
-                
+                casiVisor.visibility = 0.7;
                 
                 //Set up Morph Targets for Casi before the screen is done loading.
                 let t = 0;
