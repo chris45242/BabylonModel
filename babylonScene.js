@@ -21,7 +21,7 @@ var createScene = function () {
 	var fileName;
         
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
-        fileName = "project.blend1.glb";
+        fileName = "project.blend1.gltf";
    
         BABYLON.SceneLoader.Append(url, fileName, scene, function (scene){
                 // Create a default arc rotate camera and light.
@@ -49,12 +49,15 @@ var createScene = function () {
                 //Set up Morph Targets for Casi before the screen is done loading.
                 let t = 0;
                 scene.onBeforeRenderObservable.add(() => {
-                //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
-                primitive.morphTargetManager.getTarget(2).influence = Math.abs(Math.sin(t));
-                casiBody.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
-                casiInnerMouth.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
-                //casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.cos(t));
-                t += 0.07;
+                    
+                    //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
+                    primitive.morphTargetManager.getTarget(2).influence = Math.abs(Math.sin(t));
+                    //casiBody.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
+                    casiBody.morphTargetManager.getTarget(6).influence = 1;
+                    //casiInnerMouth.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
+                    casiInnerMouth.morphTargetManager.getTarget(6).influence = 1;
+                    //casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.cos(t));
+                    t += 0.07;
             });
     
 	});
