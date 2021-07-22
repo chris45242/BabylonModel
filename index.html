@@ -156,6 +156,12 @@
             }
           });
         }
+        // Gets the position of each vowel in the text box.
+        var str = document.getElementById("textEntry").value;     
+        for(var i = 0; i < str.length; i++)
+        {
+            console.log(str.match(/[aeiou]/gi));
+        }
     </script>
     <!--<div id="textToSpeech">
         <button class="tab current" onclick="toggleHost(event)">Casi</button>
