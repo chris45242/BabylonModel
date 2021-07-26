@@ -3,6 +3,7 @@ var currentGroup;
  
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
+    var layer = new BABYLON.Layer('', "Cyber_Background.jpg", scene, true);
     //var hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("textures/environment.dds", scene);
     //var hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("Cyber_Background.jpg", scene);
     //var currentSkybox = scene.createDefaultSkybox(hdrTexture, true);
@@ -52,10 +53,10 @@ var createScene = function () {
                     
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     primitive.morphTargetManager.getTarget(2).influence = Math.abs(Math.sin(t));
-                    //casiBody.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
-                    casiBody.morphTargetManager.getTarget(6).influence = 1;
-                    //casiInnerMouth.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
-                    casiInnerMouth.morphTargetManager.getTarget(6).influence = 1;
+                    casiBody.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
+                    //casiBody.morphTargetManager.getTarget(6).influence = 1;
+                    casiInnerMouth.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
+                    //casiInnerMouth.morphTargetManager.getTarget(6).influence = 1;
                     //casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.cos(t));
                     t += 0.07;
             });
