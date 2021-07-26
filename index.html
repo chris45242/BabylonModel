@@ -156,10 +156,13 @@
             }
           });
           // Gets the position of each vowel in the text box.
-          var str = document.getElementById("textEntry").value;     
+          var str = document.getElementById("textEntry").value;
+          var vowels = /[aeiou]/gi;
           for(var i = 0; i < str.length; i++)
           {
-              console.log(str.match(/[aeiou]/gi));
+              var vowelPosition = str.charAt(i);
+              console.log(vowelPosition);
+              console.log(str.match(vowels));
           }
         }
         // Gets the position of each vowel in the text box.
