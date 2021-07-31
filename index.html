@@ -120,9 +120,10 @@
       <button class="btn default" onClick="speakText()">Synthesize</button>
       <p id="result">Enter text above then click Synthesize</p>
     </div>
-     <audio id="audioPlayback" controls>
+    <audio id="audioPlayback" controls="">
       <source id="audioSource" type="audio/mp3" src="">
     </audio>
+    <button id="playButton" onClick="play()">Play</button>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.410.0.min.js"></script>
     <script type="text/javascript">
         // Initialize the Amazon Cognito credentials provider
@@ -137,16 +138,17 @@
                 SampleRate: "16000",
                 Text: "",
                 TextType: "text",
-                VoiceId: "Joanna"
+                VoiceId: "Joanna",
+                SpeechMarkTypes: ["sentence", "word", "viseme"]
             };
             speechParams.Text = document.getElementById("textEntry").value;
 
             // Create the Polly service object and presigner object
             var polly = new AWS.Polly({apiVersion: '2016-06-10'});
-            var signer = new AWS.Polly.Presigner(speechParams, polly)
+            var signer = new AWS.Polly.Presigner(speechParams, polly);
 
             // Create presigned URL of synthesized speech file
-            signer.getSynthesizeSpeechUrl(speechParams, function(error, url) {
+            signer.getSynthesizeSpeechUrl(speechParams, function(error, url, viseme) {
             if (error) {
                 document.getElementById('result').innerHTML = error;
             } else {
@@ -158,13 +160,23 @@
           // Gets the position of each vowel in the text box.
           var str = document.getElementById("textEntry").value;
           var vowels = /[aeiou]/gi;
-          for(var i = 0; i < str.length; i++)
-          {
-              var vowelPosition = str.charAt(i);
-              console.log(vowelPosition);
+          //for(var i = 0; i < str.length; i++)
+          //{
+              //var vowelPosition = str.charAt(i);
+              //console.log(vowelPosition);
+              //console.log(str.indexOf("e", 0));
               console.log(str.match(vowels));
-          }
-        }
+              
+             /* var synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, audioConfig);
+
+            // Subscribes to viseme received event
+            synthesizer.visemeReceived = function (s, e) {
+                console.log("(Viseme), Audio offset: " + e.audioOffset / 10000 + "ms. Viseme ID: " + e.visemeId);
+            }
+
+            synthesizer.speakSsmlAsync(ssml);*/
+              //}
+            }
         // Gets the position of each vowel in the text box.
         /*var str = document.getElementById("textEntry").value;     
         for(var i = 0; i < str.length; i++)
