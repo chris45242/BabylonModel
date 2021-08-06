@@ -3,7 +3,7 @@ var currentGroup;
  
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
-    var layer = new BABYLON.Layer('', "Cyber_Background.jpg", scene, true);
+    //var layer = new BABYLON.Layer('', "Cyber_Background.jpg", scene, true);
     //var hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("textures/environment.dds", scene);
     //var hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("Cyber_Background.jpg", scene);
     //var currentSkybox = scene.createDefaultSkybox(hdrTexture, true);
@@ -24,7 +24,7 @@ var createScene = function () {
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
         fileName = "project.blend1.gltf";
    
-        BABYLON.SceneLoader.Append(url, fileName, scene, function (scene){
+        var Casi = BABYLON.SceneLoader.Append(url, fileName, scene, function (scene){
                 // Create a default arc rotate camera and light.
                 scene.createDefaultCameraOrLight(true, true, true);
                 scene.activeCamera.alpha += Math.PI;
@@ -49,7 +49,7 @@ var createScene = function () {
                 
                 //Set up Morph Targets for Casi before the screen is done loading.
                 let t = 0;
-                scene.onBeforeRenderObservable.add(() => {
+                scene.onBeforeRenderObservable.add(function(){
                     
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     primitive.morphTargetManager.getTarget(2).influence = Math.abs(Math.sin(t));
