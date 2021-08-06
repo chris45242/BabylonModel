@@ -120,41 +120,41 @@
       <button class="btn default" onClick="speakText()">Synthesize</button>
       <p id="result">Enter text above then click Synthesize</p>
     </div>
-    <audio id="audioPlayback" controls="">
-      <source id="audioSource" type="audio/mp3" src="">
+    <audio id="audioPlayback" controls>
+      <source id="audioSource" type="audio/mp3" src="C:/Users/Chris/Desktop/Casi_Archive/Casi_on_Desktop/welcome.mp3">
     </audio>
-    <button id="playButton" onClick="play()">Play</button>
+    <input type="button" id="playButton" value="Play">
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.410.0.min.js"></script>
+    <script type="text/javascript" src="config.js"></script>
     <script type="text/javascript">
-        // Initialize the Amazon Cognito credentials provider
-        AWS.config.region = 'us-east-1';
-        AWS.config.credentials = new AWS.CognitoIdentityCredentials({IdentityPoolId: 'us-east-1:abf85ce5-6157-43df-97f9-471e86d2f9d5'});
-
         // Function invoked by button click
         function speakText() {
             // Create the JSON parameters for getSynthesizeSpeechUrl
             var speechParams = {
+                //OutputFormat: "json",
                 OutputFormat: "mp3",
                 SampleRate: "16000",
                 Text: "",
                 TextType: "text",
-                VoiceId: "Joanna",
-                SpeechMarkTypes: ["sentence", "word", "viseme"]
+                VoiceId: "Joanna"
+                //SpeechMarkTypes: ["sentence" ,"viseme"]
             };
-            speechParams.Text = document.getElementById("textEntry").value;
-
+            speechParams.Text = document.getElementById("textEntry").value; 
+            
             // Create the Polly service object and presigner object
             var polly = new AWS.Polly({apiVersion: '2016-06-10'});
             var signer = new AWS.Polly.Presigner(speechParams, polly);
-
+            
             // Create presigned URL of synthesized speech file
-            signer.getSynthesizeSpeechUrl(speechParams, function(error, url, viseme) {
+            //polly.synthesizeSpeech(speechParams, function(error, url) {
+            signer.getSynthesizeSpeechUrl(speechParams, function(error, url) {
             if (error) {
                 document.getElementById('result').innerHTML = error;
             } else {
                 document.getElementById('audioSource').src = url;
                 document.getElementById('audioPlayback').load();
                 document.getElementById('result').innerHTML = "Speech ready to play.";
+                document.getElementById('playButton');
             }
           });
           // Gets the position of each vowel in the text box.
