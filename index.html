@@ -121,7 +121,7 @@
       <p id="result">Enter text above then click Synthesize</p>
     </div>
     <audio id="audioPlayback" controls>
-      <source id="audioSource" type="audio/mp3" src="C:/Users/Chris/Desktop/Casi_Archive/Casi_on_Desktop/welcome.mp3">
+      <source id="audioSource" type="audio/mp3" src="">
     </audio>
     <input type="button" id="playButton" value="Play">
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.410.0.min.js"></script>
@@ -146,7 +146,7 @@
             var signer = new AWS.Polly.Presigner(speechParams, polly);
             
             // Create presigned URL of synthesized speech file
-            //polly.synthesizeSpeech(speechParams, function(error, url) {
+            //signer.synthesizeSpeech(speechParams, function(error, url) {
             signer.getSynthesizeSpeechUrl(speechParams, function(error, url) {
             if (error) {
                 document.getElementById('result').innerHTML = error;
@@ -159,7 +159,34 @@
           });
           // Gets the position of each vowel in the text box.
           var str = document.getElementById("textEntry").value;
-          var vowels = /[aeiou]/gi;
+          var vowels = /[aeiou]/ig;
+          //var vowels = ['a', 'e', 'i', 'o', 'u'];
+          vowels.ignoreCase;
+          var visemes = str.substring;
+          var afirst = str.indexOf('a').ignoreCase;
+          var anext = str.indexOf('a', afirst+1);
+          console.log(anext);
+          
+          var e = "e";
+          for(var index = str.indexOf(e); index >= 0; index = str.indexOf(e, index+1)){
+              console.log(index);
+          }
+          
+          var i = "i";
+          for(var Iindex = str.indexOf(i); Iindex >= 0; Iindex = str.indexOf(i, Iindex+1)){
+              console.log(Iindex);
+          }
+          //var ifirst = str.indexOf('i').ignoreCase;
+          //var inext = str.indexOf('i', ifirst+1);
+          //console.log(inext);
+          
+          var ofirst = str.indexOf('o').ignoreCase;
+          var onext = str.indexOf('o', ofirst+1);
+          console.log(onext);
+          
+          var ufirst = str.indexOf('u').ignoreCase;
+          var unext = str.indexOf('u', ufirst+1);
+          console.log(unext);
           //for(var i = 0; i < str.length; i++)
           //{
               //var vowelPosition = str.charAt(i);
