@@ -163,9 +163,11 @@
           //var vowels = ['a', 'e', 'i', 'o', 'u'];
           vowels.ignoreCase;
           var visemes = str.substring;
-          var afirst = str.indexOf('a').ignoreCase;
-          var anext = str.indexOf('a', afirst+1);
-          console.log(anext);
+          
+          var a = "a";
+          for(var aindex = str.indexOf(a); aindex >= 0; aindex = str.indexOf(a, aindex+1)){
+              console.log(aindex);
+          }
           
           var e = "e";
           for(var index = str.indexOf(e); index >= 0; index = str.indexOf(e, index+1)){
@@ -176,17 +178,17 @@
           for(var Iindex = str.indexOf(i); Iindex >= 0; Iindex = str.indexOf(i, Iindex+1)){
               console.log(Iindex);
           }
-          //var ifirst = str.indexOf('i').ignoreCase;
-          //var inext = str.indexOf('i', ifirst+1);
-          //console.log(inext);
           
-          var ofirst = str.indexOf('o').ignoreCase;
-          var onext = str.indexOf('o', ofirst+1);
-          console.log(onext);
+          var o = "o";
+          for(var oindex = str.indexOf(o); oindex >= 0; oindex = str.indexOf(o, oindex+1)){
+              console.log(oindex);
+          }
           
-          var ufirst = str.indexOf('u').ignoreCase;
-          var unext = str.indexOf('u', ufirst+1);
-          console.log(unext);
+          var u = "u";
+          for(var uindex = str.indexOf(u); uindex >= 0; uindex = str.indexOf(u, uindex+1)){
+              console.log(uindex);
+          }
+          
           //for(var i = 0; i < str.length; i++)
           //{
               //var vowelPosition = str.charAt(i);
