@@ -92,7 +92,6 @@
             #textToSpeech{
                 margin-left: 330px;
                 display: none;
-                
             }
         </style>
     </head>
@@ -137,7 +136,7 @@
                 Text: "",
                 TextType: "text",
                 VoiceId: "Joanna"
-                //SpeechMarkTypes: ["sentence" ,"viseme"]
+                //SpeechMarkTypes: ["viseme", "word"]
             };
             speechParams.Text = document.getElementById("textEntry").value; 
             
@@ -164,6 +163,7 @@
           vowels.ignoreCase;
           var visemes = str.substring;
           
+          //Gets the index of every vowel in text box and writes it to console.
           var a = "a";
           for(var aindex = str.indexOf(a); aindex >= 0; aindex = str.indexOf(a, aindex+1)){
               console.log(aindex);
@@ -253,12 +253,7 @@
 
           //main();
           
-          //Initialize AWS and create Polly service objects
-          /*-async function main(){
-            window.AWS.config.region = 'us-east-1';
-            window.AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-              IdentityPoolId: 'us-east-1:abf85ce5-6157-43df-97f9-471e86d2f9d5',
-            });
+          /*
             
             //Initializing the host TextToSpeechFeature
             const polly = new AWS.Polly();
