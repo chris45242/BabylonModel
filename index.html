@@ -130,15 +130,18 @@
         function speakText() {
             // Create the JSON parameters for getSynthesizeSpeechUrl
             var speechParams = {
-                //OutputFormat: "json",
-                OutputFormat: "mp3",
+                OutputFormat: "json",
+                //OutputFormat: "mp3",
                 SampleRate: "16000",
                 Text: "",
                 TextType: "text",
-                VoiceId: "Joanna"
-                //SpeechMarkTypes: ["viseme", "word"]
+                VoiceId: "Joanna",
+                SpeechMarkTypes: ["viseme", "word"]
             };
-            speechParams.Text = document.getElementById("textEntry").value; 
+            speechParams.Text = document.getElementById("textEntry").value.toLowerCase(); 
+            var lowerSpeechParams = document.getElementById("textEntry").value.toLowerCase();
+            //document.getElementById("textEntry").innerHTML = lowerSpeechParams.toLowerCase();
+            console.log(speechParams.Text);
             
             // Create the Polly service object and presigner object
             var polly = new AWS.Polly({apiVersion: '2016-06-10'});
