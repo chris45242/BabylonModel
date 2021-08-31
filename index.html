@@ -128,6 +128,7 @@
     <script type="text/javascript">
         // Function invoked by button click
         function speakText() {
+            
             // Create the JSON parameters for getSynthesizeSpeechUrl
             var speechParams = {
                 OutputFormat: "json",
@@ -138,20 +139,25 @@
                 VoiceId: "Joanna",
                 SpeechMarkTypes: ["viseme", "word"]
             };
+            
             speechParams.Text = document.getElementById("textEntry").value.toLowerCase(); 
             console.log(speechParams.Text);
             
             // Create the Polly service object and presigner object
             var polly = new AWS.Polly({apiVersion: '2016-06-10'});
             var signer = new AWS.Polly.Presigner(speechParams, polly);
-            
+                    
             // Create presigned URL of synthesized speech file
-            //signer.synthesizeSpeech(speechParams, function(error, url) {
+            //polly.synthesizeSpeech(speechParams, function(error, url) {
             signer.getSynthesizeSpeechUrl(speechParams, function(error, url) {
             if (error) {
                 document.getElementById('result').innerHTML = error;
             } else {
                 document.getElementById('audioSource').src = url;
+                console.log(url);
+                //var contents = (new URL(url)).searchParams;
+                //contents.getAll("value");
+                //console.log(contents);
                 document.getElementById('audioPlayback').load();
                 document.getElementById('result').innerHTML = "Speech ready to play.";
                 document.getElementById('playButton');
