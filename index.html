@@ -23,7 +23,7 @@
         <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
         
         <!-- Text to speech Dependency -->
-        <script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.923.0.min.js"></script>
+        <script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.983.0.min.js"></script>
     
         <!-- Host Build File -->
         <script type="text/javascript" src="../dist/host.babylon.js"></script>
@@ -98,30 +98,15 @@
 <body>
     <canvas id="renderCanvas"></canvas>
     <script src="./babylonScene.js"></script>
-    
-    <!-- Text to speech Dependency -->
-    <!--<script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.923.0.min.js"></script>-->
-    
-    <!-- BabylonJS Dependencies -->
-    <!--<script src="https://preview.babylonjs.com/babylon.js"></script>
-   <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>-->
-    
-    <!-- Host Build File -->
-    <!--<script type="text/javascript" src="../dist/host.babylon.js"></script>-->
-    
-    <!--<div id="loadScreen">
-        <div id="loader"></div>
-    </div>-->
-    
-    <!--Text to speech controls-->
     <div id="textToSynth">
       <input autofocus size="23" type="text" id="textEntry" value="It's very good to meet you."/>
       <button class="btn default" onClick="speakText()">Synthesize</button>
       <p id="result">Enter text above then click Synthesize</p>
     </div>
-    <audio id="audioPlayback" controls>
+    <audio id="audioPlayback" autoplay>
       <source id="audioSource" type="audio/mp3" src="">
     </audio>
+
     <input type="button" id="playButton" value="Play">
     <script type="text/javascript" src="config.js"></script>
     <script type="text/javascript">
@@ -132,11 +117,12 @@
             var speechParams = {
                 OutputFormat: "json",
                 //OutputFormat: "mp3",
+                //OutputS3BucketName: "casi-bucket",
                 SampleRate: "16000",
                 Text: "",
                 TextType: "text",
                 VoiceId: "Joanna",
-                SpeechMarkTypes: ["viseme", "word"]
+                SpeechMarkTypes: ["viseme"]
             };
             
             speechParams.Text = document.getElementById("textEntry").value.toLowerCase(); 
@@ -144,9 +130,10 @@
             
             // Create the Polly service object and presigner object
             var polly = new AWS.Polly({apiVersion: '2016-06-10'});
-            var signer = new AWS.Polly.Presigner(speechParams, polly);
-                    
+            var signer = new AWS.Polly.Presigner(speechParams, polly)
+
             // Create presigned URL of synthesized speech file
+            //polly.startSpeechSynthesisTask(speechParams, function(error, url){
             //polly.synthesizeSpeech(speechParams, function(error, url) {
             signer.getSynthesizeSpeechUrl(speechParams, function(error, url) {
             if (error) {
@@ -154,12 +141,17 @@
             } else {
                 document.getElementById('audioSource').src = url;
                 console.log(url);
+                console.log(signer);
+                fetch(url).then(res => res.json()).then((out) => {
+                    console.log("Checkout this JSON!", out);
+                }).catch(error => {throw error});
                 //var contents = (new URL(url)).searchParams;
                 //contents.getAll("value");
                 //console.log(contents);
                 document.getElementById('audioPlayback').load();
                 document.getElementById('result').innerHTML = "Speech ready to play.";
                 document.getElementById('playButton');
+                //Convert speech to text using Amazon Transcribe
             }
           });
           // Gets the position of each vowel in the text box.
@@ -219,97 +211,5 @@
             console.log(str.match(/[aeiou]/gi));
         }*/
     </script>
-    <!--<div id="textToSpeech">
-        <button class="tab current" onclick="toggleHost(event)">Casi</button>
-        <div>
-            <textarea autofocus rows="4" cols="30" class="textEntry Casi">
-                <speak>
-                    <amazon:domain name="conversational">
-                        Hello, my name is Casi. I used to only be a host inside Amazon Sumerian, but
-                        now you can use me in other Javascript runtime environments like Babylon js. Right now,
-                        <mark name='{"feature":"PointOfInterestFeature","method":"setTargetByName","args":["char:gaze"]}' />
-                        my friend and I here are in Babylon js.
-                  </amazon:domain>
-                </speak>
-            </textarea>
-        </div>
-        <div>
-            <button id="play" class="speechButton">Play</button>
-            <button id="pause" class="speechButton">Pause</button>
-            <button id="resume" class="speechButton">Resume</button>
-            <button id="stop" class="speechButton">Stop</button>
-          </div>
-          <div>
-            <button id="gestures" class="gestureButton">Generate Gestures</button>
-          </div>
-          <div>
-            <select id="emotes" class="gestureButton"></select>
-          </div>
-          <div>
-            <button id="playEmote" class="gestureButton">Play Emote</button>
-          </div>
-    </div>-->
-    
-    <!--Create the BabylonJS Scene -->
-    <script>
-        //Initialize global variables
-       // const speakers = new Map([
-         //   ['Casi', undefined],
-          //]);
-
-          //main();
-          
-          /*
-            
-            //Initializing the host TextToSpeechFeature
-            const polly = new AWS.Polly();
-            const presigner = new AWS.Polly.Presigner();
-            const speechInit = HOST.aws.TextToSpeechFeature.initializeService(
-              polly,
-              presigner,
-              window.AWS.VERSION
-            );
-            
-            //Define the gltf assets that will represent the hosts
-            const characterFile1 = 'C:\babylon\babylonJs_sample_server-master\public\amazon-sumerian-hosts\BabylonModel\project.blend1.gltf';
-            const animationPath1 = './assets/glTF/animations/adult_female';
-            const animationFiles = [
-              'stand_idle.glb',
-              'lipsync.glb',
-              'gesture.glb',
-              'emote.glb',
-              'face_idle.glb',
-              'blink.glb',
-              'poi.glb',
-            ];
-            const gestureConfigFile = 'gesture.json';
-            const poiConfigFile = 'poi.json';
-            const audioAttachJoint1 = 'char:def_c_neckB'; // Name of the joint to attach audio to
-            const audioAttachJoint2 = 'char:head';
-            const lookJoint1 = 'char:jx_c_look'; // Name of the joint to use for point of interest target tracking
-            const lookJoint2 = 'char:gaze';
-            const voice1 = 'Joanna'; // Polly voice. Full list of available voices at: https://docs.aws.amazon.com/polly/latest/dg/voicelist.html
-            const voiceEngine = 'neural'; // Neural engine is not available for all voices in all regions: https://docs.aws.amazon.com/polly/latest/dg/NTTS-main.html
-            
-            //Set up BabylonJS Scene and hosts
-            const {scene, camera} = createScene();
-            const {
-                character: character1,
-                clips: clips1,
-                bindPoseOffset: bindPoseOffset1,
-              } = await loadCharacter(
-                scene,
-                characterFile1,
-                animationPath1,
-                animationFiles
-              );
-              character1.position.x = 1.25;
-              character1.rotation.y = -0.5;
-
-
-
-          };*/
-        
-        </script>
 </body>
 </html>
