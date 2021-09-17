@@ -139,10 +139,14 @@
             if (error) {
                 document.getElementById('result').innerHTML = error;
             } else {
+               
                 document.getElementById('audioSource').src = url;
                 console.log(url);
                 console.log(signer);
-                fetch(url).then(res => res.json()).then((out) => {
+                
+                //Get's JSON file from url
+                //fetch(url + encodeURIComponent("{}")).then(res => res.json()).then((out) => {
+                fetch(url).then(res => res.text()).then((out) => {
                     console.log("Checkout this JSON!", out);
                 }).catch(error => {throw error});
                 //var contents = (new URL(url)).searchParams;
