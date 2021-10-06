@@ -124,13 +124,12 @@
                 VoiceId: "Joanna",
                 SpeechMarkTypes: ["viseme"]
             };
-            
             speechParams.Text = document.getElementById("textEntry").value.toLowerCase(); 
             console.log(speechParams.Text);
             
             // Create the Polly service object and presigner object
             var polly = new AWS.Polly({apiVersion: '2016-06-10'});
-            var signer = new AWS.Polly.Presigner(speechParams, polly)
+            var signer = new AWS.Polly.Presigner(speechParams, polly);
 
             // Create presigned URL of synthesized speech file
             //polly.startSpeechSynthesisTask(speechParams, function(error, url){
@@ -139,19 +138,49 @@
             if (error) {
                 document.getElementById('result').innerHTML = error;
             } else {
-               
                 document.getElementById('audioSource').src = url;
                 console.log(url);
                 console.log(signer);
                 
-                //Get's JSON file from url
-                //fetch(url + encodeURIComponent("{}")).then(res => res.json()).then((out) => {
+                var selectedText = "";
+                var viseme = "value";
+                var time = "time";
+                var bracket = "}";
+                var oldIndex = "";
+                var currentItem = "";
+                var newIndex = "";
+                var jsonIndex = -1;
+                //var visemeIndex = url.indexOf('viseme');
+                //Get's text file from url
                 fetch(url).then(res => res.text()).then((out) => {
                     console.log("Checkout this JSON!", out);
+                    console.log(out.substring(27, 37));
+                    var resJson = JSON.stringify(out);
+                    console.log(resJson);
+                    var jsonParsed = JSON.parse(resJson);
+                    for(key in jsonParsed){
+                        if(jsonParsed.hasOwnProperty(key)){
+                            console.log("%c "+key + " = " + jsonParsed[key],"color:cyan");
+                        }
+                    }
+                    var filteredObject = resJson.find(function(item, i){
+                        if(item.name === viseme){
+                            jsonIndex = i;
+                            return i;
+                            console.log(i);
+                        }
+                    });
+                    for(var visemeIndex = resJson.indexOf(viseme); visemeIndex >= 0; visemeIndex = resJson.indexOf(viseme, visemeIndex+1)){
+                        //for(var bracketIndex = out.indexOf(bracket); bracketIndex >= 0; bracketIndex = out.indexOf(bracket, bracketIndex+1)){
+                            //console.log(out.substring(visemeIndex));
+                            console.log(visemeIndex);
+                          //  console.log(out.substring(bracketIndex));
+                    //}
+                    }
+                    for(var bracketIndex = out.indexOf(bracket); bracketIndex >= 0; bracketIndex = out.indexOf(bracket, bracketIndex+1)){
+                        console.log(bracketIndex);
+                   }
                 }).catch(error => {throw error});
-                //var contents = (new URL(url)).searchParams;
-                //contents.getAll("value");
-                //console.log(contents);
                 document.getElementById('audioPlayback').load();
                 document.getElementById('result').innerHTML = "Speech ready to play.";
                 document.getElementById('playButton');
