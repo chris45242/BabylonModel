@@ -21,6 +21,7 @@
         <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
         <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
         <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         
         <!-- Text to speech Dependency -->
         <script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.983.0.min.js"></script>
@@ -110,6 +111,7 @@
     <input type="button" id="playButton" value="Play">
     <script type="text/javascript" src="config.js"></script>
     <script type="text/javascript">
+        var $ = function(id){ return document.getElementById(id);};
         // Function invoked by button click
         function speakText() {
             
@@ -122,7 +124,7 @@
                 Text: "",
                 TextType: "text",
                 VoiceId: "Joanna",
-                SpeechMarkTypes: ["viseme"]
+                SpeechMarkTypes: ["viseme", "word"]
             };
             speechParams.Text = document.getElementById("textEntry").value.toLowerCase(); 
             console.log(speechParams.Text);
@@ -142,49 +144,45 @@
                 console.log(url);
                 console.log(signer);
                 
-                var selectedText = "";
+                //var selectedText = "";
                 var viseme = "value";
                 var time = "time";
                 var bracket = "}";
-                var oldIndex = "";
-                var currentItem = "";
-                var newIndex = "";
                 var jsonIndex = -1;
-                //var visemeIndex = url.indexOf('viseme');
-                //Get's text file from url
-                fetch(url).then(res => res.text()).then((out) => {
+                var itemHTML = "";
+                var hash;
+                //var myJson = [];
+                
+                fetch(url, headers => 'Content-Type:', 'application/json').then(res => res.text()).then((out) => {
                     console.log("Checkout this JSON!", out);
                     console.log(out.substring(27, 37));
-                    var resJson = JSON.stringify(out);
-                    console.log(resJson);
-                    var jsonParsed = JSON.parse(resJson);
-                    for(key in jsonParsed){
-                        if(jsonParsed.hasOwnProperty(key)){
-                            console.log("%c "+key + " = " + jsonParsed[key],"color:cyan");
+                    var myJson = "["+out+"]";
+                    console.log(myJson);
+                    var newMyJson = myJson.indexOf(bracket);
+                    console.log(newMyJson);
+                    //var jsonStringed = JSON.stringify(out);
+                    var jsonParsed = JSON.parse(myJson);
+                    //console.log(jsonStringed);
+                    console.log(jsonParsed);
+                    console.log(window.location.pathname);
+                    //console.log(jsonParsed);
+                    for(var i in Array(12).keys()){
+                        if(out.hasOwnProperty(i)){
+                            console.log(jsonParsed);
+                            var value = jsonStringed[i];
+                            console.log(value);
+                            console.log([jsonStringed[1]]);
+                            var anotherResJson = jsonStringed[i]['@value'];
+                            console.log("jsonParsed[",i,"][@value]:",anotherResJson);
                         }
-                    }
-                    var filteredObject = resJson.find(function(item, i){
-                        if(item.name === viseme){
-                            jsonIndex = i;
-                            return i;
-                            console.log(i);
-                        }
-                    });
-                    for(var visemeIndex = resJson.indexOf(viseme); visemeIndex >= 0; visemeIndex = resJson.indexOf(viseme, visemeIndex+1)){
-                        //for(var bracketIndex = out.indexOf(bracket); bracketIndex >= 0; bracketIndex = out.indexOf(bracket, bracketIndex+1)){
-                            //console.log(out.substring(visemeIndex));
-                            console.log(visemeIndex);
-                          //  console.log(out.substring(bracketIndex));
-                    //}
-                    }
-                    for(var bracketIndex = out.indexOf(bracket); bracketIndex >= 0; bracketIndex = out.indexOf(bracket, bracketIndex+1)){
-                        console.log(bracketIndex);
-                   }
+                    //});
+                    }    
                 }).catch(error => {throw error});
+                //speechParams.OutputFormat = "mp3";
                 document.getElementById('audioPlayback').load();
                 document.getElementById('result').innerHTML = "Speech ready to play.";
                 document.getElementById('playButton');
-                //Convert speech to text using Amazon Transcribe
+                //Convert speech to text using Amazon Transcribe*/
             }
           });
           // Gets the position of each vowel in the text box.
@@ -205,10 +203,10 @@
               console.log(index);
           }
           
-          var i = "i";
+          /*var i = "i";
           for(var Iindex = str.indexOf(i); Iindex >= 0; Iindex = str.indexOf(i, Iindex+1)){
               console.log(Iindex);
-          }
+          }*/
           
           var o = "o";
           for(var oindex = str.indexOf(o); oindex >= 0; oindex = str.indexOf(o, oindex+1)){
