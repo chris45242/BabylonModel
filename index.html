@@ -155,7 +155,7 @@
                 
                 fetch(url, headers => 'Content-Type:', 'application/json').then(res => res.text()).then((out) => {
                     console.log("Checkout this JSON!", out);
-                    console.log(out.substring(27, 37));
+                    console.log(out.substring(47, 57));
                     var myJson = "["+out+"]";
                     console.log(myJson);
                     var newMyJson = myJson.indexOf(bracket);
@@ -164,9 +164,11 @@
                     var jsonParsed = JSON.parse(myJson);
                     //console.log(jsonStringed);
                     console.log(jsonParsed);
-                    console.log(window.location.pathname);
-                    //console.log(jsonParsed);
-                    for(var i in Array(12).keys()){
+                    //For every index of a end curly bracket } add a comma to the right of it except the last curly bracket
+                    
+                    //Gets the last index of a comma and removes it
+                    
+                    /*for(var i in Array(12).keys()){
                         if(out.hasOwnProperty(i)){
                             console.log(jsonParsed);
                             var value = jsonStringed[i];
@@ -176,7 +178,7 @@
                             console.log("jsonParsed[",i,"][@value]:",anotherResJson);
                         }
                     //});
-                    }    
+                    }*/    
                 }).catch(error => {throw error});
                 //speechParams.OutputFormat = "mp3";
                 document.getElementById('audioPlayback').load();
