@@ -158,17 +158,18 @@
                     console.log(out.substring(47, 57));
                     var myJson = "["+out+"]";
                     console.log(myJson);
-                    var newMyJson = myJson.indexOf(bracket);
-                    console.log(newMyJson);
+                    //var newMyJson = myJson.indexOf(bracket);
+                    //console.log(newMyJson);
+                    //For every index of a end curly bracket } add a comma to the right of it except the last curly bracket.
                     for(var i = 0; i < myJson.length; i++){
-                        var str = myJson.replace(/(\n)/g,",\n") + ",";
+                        var str = myJson.replace(/(\n)/g,",\n");
                         console.log(str);
                     }
+                    //str.lastIndexOf(",")
                     //var jsonStringed = JSON.stringify(out);
                     var jsonParsed = JSON.parse(myJson);
                     //console.log(jsonStringed);
                     console.log(jsonParsed);
-                    //For every index of a end curly bracket } add a comma to the right of it except the last curly bracket
                     
                     //Gets the last index of a comma and removes it
                     
