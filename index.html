@@ -160,6 +160,10 @@
                     console.log(myJson);
                     var newMyJson = myJson.indexOf(bracket);
                     console.log(newMyJson);
+                    for(var i = 0; i < myJson.length; i++){
+                        var str = myJson.replace(/(\n)/g,",\n") + ",";
+                        console.log(str);
+                    }
                     //var jsonStringed = JSON.stringify(out);
                     var jsonParsed = JSON.parse(myJson);
                     //console.log(jsonStringed);
