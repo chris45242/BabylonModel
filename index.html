@@ -165,9 +165,13 @@
                         var str = myJson.replace(/(\n)/g,",\n");
                         console.log(str);
                     }
-                    //str.lastIndexOf(",")
+                    var newJson = str.lastIndexOf(",");
+                    str = str.substring(0, newJson);
+                    console.log(str);
+                    var finalJson = str+"]";
+                    console.log(finalJson);
                     //var jsonStringed = JSON.stringify(out);
-                    var jsonParsed = JSON.parse(myJson);
+                    var jsonParsed = JSON.parse(finalJson);
                     //console.log(jsonStringed);
                     console.log(jsonParsed);
                     
