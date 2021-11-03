@@ -111,6 +111,7 @@
     <script type="text/javascript" src="config.js"></script>
     <script type="text/javascript">
         var $ = function(id){ return document.getElementById(id);};
+        //var viseme;
         // Function invoked by button click
         function speakText() {
             
@@ -154,7 +155,7 @@
                     var myJson = "["+out;
                     console.log(myJson);
                     //For every index of a end curly bracket } add a comma to the right of it except the last curly bracket.
-                    for(let i = 0; i < myJson.length; i++){
+                    for(let j = 0; j < myJson.length; j++){
                         var str = myJson.replace(/(\n)/g,",\n");
                         console.log(str);
                     }
@@ -167,8 +168,13 @@
                     console.log(jsonParsed);
                     console.log(jsonParsed[0]['value']);
                     console.log(jsonParsed.length);
-                    for(let i = 0; i < jsonParsed.length; i++){
+                    for(var i = 0; i < jsonParsed.length; i++){
                         var viseme = jsonParsed[i]['value'];
+                        if(viseme.includes('e')){console.log("got it");}
+                        if(viseme.includes('a')){console.log("Gimme an a");}
+                        if(viseme.includes('i')){console.log("Here's an e");}
+                        if(viseme.includes('u')){console.log("Found a u");}
+                        if(viseme.includes('o')){console.log("I see an o");}
                         var time = jsonParsed[i]['time'];
                         var startTime = jsonParsed[i]['start'];
                         var endTime = jsonParsed[i]['end'];
@@ -176,6 +182,7 @@
                         console.log(time);
                         console.log(startTime);
                         console.log(endTime);
+                        //return viseme, time, startTime, endTime;
                     }
                     /*for(var i in Array(12).keys()){
                         if(out.hasOwnProperty(i)){
@@ -187,7 +194,7 @@
                             console.log("jsonParsed[",i,"][@value]:",anotherResJson);
                         }
                     //});
-                    }*/    
+                    }*/  
                 }).catch(error => {throw error});
                 //speechParams.OutputFormat = "mp3";
                 document.getElementById('audioPlayback').load();
@@ -235,16 +242,6 @@
               //console.log(vowelPosition);
               //console.log(str.indexOf("e", 0));
               console.log(str.match(vowels));
-              
-             /* var synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig, audioConfig);
-
-            // Subscribes to viseme received event
-            synthesizer.visemeReceived = function (s, e) {
-                console.log("(Viseme), Audio offset: " + e.audioOffset / 10000 + "ms. Viseme ID: " + e.visemeId);
-            }
-
-            synthesizer.speakSsmlAsync(ssml);*/
-              //}
             }
         // Gets the position of each vowel in the text box.
         /*var str = document.getElementById("textEntry").value;     
