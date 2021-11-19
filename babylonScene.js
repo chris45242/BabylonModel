@@ -1,6 +1,6 @@
 var canvas = document.getElementById("renderCanvas");
 var currentGroup;
-//var lipSync;
+var lipSync;
  
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
@@ -50,7 +50,7 @@ var createScene = function () {
                 
                 //Set up Morph Targets for Casi before the screen is done loading.
                 let t = 0;
-                var lipSync = scene.onBeforeRenderObservable.add(function(){
+                lipSync = scene.onBeforeRenderObservable.add(function(){
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     primitive.morphTargetManager.getTarget(2).influence = Math.abs(Math.sin(t));
                     casiBody.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
