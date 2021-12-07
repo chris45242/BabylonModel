@@ -50,7 +50,15 @@ var createScene = function () {
                 
                 //Set up Morph Targets for Casi before the screen is done loading.
                 let t = 0;
+                var speak = document.getElementById("speaker").innerHTML;
+                console.log(speak);
+                //If speakText button == true then do lipSync function below
+                
                 lipSync = scene.onBeforeRenderObservable.add(function(){
+                    console.log(viseme);
+                    console.log(time);
+                    console.log(startTime);
+                    console.log(endTime);
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     primitive.morphTargetManager.getTarget(2).influence = Math.abs(Math.sin(t));
                     casiBody.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));

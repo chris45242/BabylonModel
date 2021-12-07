@@ -98,10 +98,10 @@
     </head>
 <body>
     <canvas id="renderCanvas"></canvas>
-    <script src="./babylonScene.js"></script>
+    <script src="babylonScene.js"></script>
     <div id="textToSynth">
       <input autofocus size="23" type="text" id="textEntry" value="It's very good to meet you."/>
-      <button class="btn default" onClick="speakText()">Synthesize</button>
+      <button id="speaker" class="btn default" onClick="speakText()">Synthesize</button>
       <p id="result">Enter text above then click Synthesize</p>
     </div>
     <audio id="audioPlayback" autoplay>
@@ -110,8 +110,10 @@
     <input type="button" id="playButton" value="Play">
     <script type="text/javascript" src="config.js"></script>
     <script type="text/javascript">
+        //var exports = {};
         var $ = function(id){ return document.getElementById(id);};
-        //var viseme;
+        var finalJson;
+        var viseme, time, startTime, endTime;
         // Function invoked by button click
         function speakText() {
             
@@ -162,96 +164,45 @@
                     //Gets the last index of a comma and removes it
                     var newJson = str.lastIndexOf(",");
                     str = str.substring(0, newJson);
-                    var finalJson = str+"]";
-                    console.log(finalJson);
+                    finalJson = str+"]";
+                    //console.log(finalJson);
                     var jsonParsed = JSON.parse(finalJson);
                     console.log(jsonParsed);
                     console.log(jsonParsed[0]['value']);
                     console.log(jsonParsed.length);
                     for(var i = 0; i < jsonParsed.length; i++){
-                        var viseme = jsonParsed[i]['value'];
+                        viseme = jsonParsed[i]['value'];
                         if(viseme.includes('e')){console.log("got it");}
                         if(viseme.includes('a')){console.log("Gimme an a");}
                         if(viseme.includes('i')){console.log("Here's an e");}
                         if(viseme.includes('u')){console.log("Found a u");}
                         if(viseme.includes('o')){console.log("I see an o");}
-                        var time = jsonParsed[i]['time'];
-                        var startTime = jsonParsed[i]['start'];
-                        var endTime = jsonParsed[i]['end'];
+                        time = jsonParsed[i]['time'];
+                        startTime = jsonParsed[i]['start'];
+                        endTime = jsonParsed[i]['end'];
                         console.log(viseme);
                         console.log(time);
                         console.log(startTime);
                         console.log(endTime);
                         console.log(lipSync);
+                        //post the json data to a json file using a POST request so babylonjs can access it globally
+                        //module.exports = viseme;
                         return viseme, time, startTime, endTime;
+                        module.exports = viseme;
+                        module.exports = time;
+                        module.exports = startTime;
+                        module.exports = endTime;
                         //put the values of variables viseme, time, startTime, endTime into the function
                         //var lipSync = scene.onBeforeRenderObservable.add(function in babylonScene.js
                     }
-                    /*for(var i in Array(12).keys()){
-                        if(out.hasOwnProperty(i)){
-                            console.log(jsonParsed);
-                            var value = jsonStringed[i];
-                            console.log(value);
-                            console.log([jsonStringed[1]]);
-                            var anotherResJson = jsonStringed[i]['@value'];
-                            console.log("jsonParsed[",i,"][@value]:",anotherResJson);
-                        }
-                    //});
-                    }*/  
                 }).catch(error => {throw error});
                 //speechParams.OutputFormat = "mp3";
                 document.getElementById('audioPlayback').load();
                 document.getElementById('result').innerHTML = "Speech ready to play.";
                 document.getElementById('playButton');
-                //Convert speech to text using Amazon Transcribe*/
             }
           });
-          // Gets the position of each vowel in the text box.
-          var str = document.getElementById("textEntry").value;
-          var vowels = /[aeiou]/ig;
-          //var vowels = ['a', 'e', 'i', 'o', 'u'];
-          vowels.ignoreCase;
-          var visemes = str.substring;
-          
-          //Gets the index of every vowel in text box and writes it to console.
-          var a = "a";
-          for(var aindex = str.indexOf(a); aindex >= 0; aindex = str.indexOf(a, aindex+1)){
-              console.log(aindex);
-          }
-          
-          var e = "e";
-          for(var index = str.indexOf(e); index >= 0; index = str.indexOf(e, index+1)){
-              console.log(index);
-          }
-          
-          /*var i = "i";
-          for(var Iindex = str.indexOf(i); Iindex >= 0; Iindex = str.indexOf(i, Iindex+1)){
-              console.log(Iindex);
-          }*/
-          
-          var o = "o";
-          for(var oindex = str.indexOf(o); oindex >= 0; oindex = str.indexOf(o, oindex+1)){
-              console.log(oindex);
-          }
-          
-          var u = "u";
-          for(var uindex = str.indexOf(u); uindex >= 0; uindex = str.indexOf(u, uindex+1)){
-              console.log(uindex);
-          }
-          
-          //for(var i = 0; i < str.length; i++)
-          //{
-              //var vowelPosition = str.charAt(i);
-              //console.log(vowelPosition);
-              //console.log(str.indexOf("e", 0));
-              console.log(str.match(vowels));
             }
-        // Gets the position of each vowel in the text box.
-        /*var str = document.getElementById("textEntry").value;     
-        for(var i = 0; i < str.length; i++)
-        {
-            console.log(str.match(/[aeiou]/gi));
-        }*/
     </script>
 </body>
 </html>
