@@ -1,6 +1,8 @@
+//import {viseme, time, startTime, endTime} from './index.html';
 var canvas = document.getElementById("renderCanvas");
 var currentGroup;
 var lipSync;
+
  
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
@@ -53,13 +55,17 @@ var createScene = function () {
                 var speak = document.getElementById("speaker").innerHTML;
                 console.log(speak);
                 //If speakText button == true then do lipSync function below
-                
+                //speakText();
                 lipSync = scene.onBeforeRenderObservable.add(function(){
+                    
                     console.log(viseme);
-                    console.log(time);
-                    console.log(startTime);
-                    console.log(endTime);
+                    //console.log(time);
+                    //console.log(startTime);
+                    //console.log(endTime);
+                    //if(viseme == 'e'){casiInnerMouth.morphTargetManager.getTarget()}
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
+                    //Note casiBody morphTarget 5 is casi eyes joyful
+                    //primitive morphTarget 3 is casi mouth A
                     primitive.morphTargetManager.getTarget(2).influence = Math.abs(Math.sin(t));
                     casiBody.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
                     //casiBody.morphTargetManager.getTarget(6).influence = 1;
