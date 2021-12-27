@@ -100,7 +100,7 @@
    
     <div id="textToSynth">
       <input autofocus size="23" type="text" id="textEntry" value="It's very good to meet you."/>
-      <button id="speaker" class="btn default" onClick="speakText()">Synthesize</button>
+      <button id="speaker" class="btn default" onClick="speakText(); soundText();">Synthesize</button>
       <p id="result">Enter text above then click Synthesize</p>
     </div>
     <audio id="audioPlayback" autoplay>
@@ -136,13 +136,11 @@
             var signer = new AWS.Polly.Presigner(speechParams, polly);
 
             // Create presigned URL of synthesized speech file
-            //polly.startSpeechSynthesisTask(speechParams, function(error, url){
-            //polly.synthesizeSpeech(speechParams, function(error, url) {
             signer.getSynthesizeSpeechUrl(speechParams, function(error, url) {
             if (error) {
                 document.getElementById('result').innerHTML = error;
             } else {
-                document.getElementById('audioSource').src = url;
+                
                 console.log(url);
                 console.log(signer);
                 
@@ -196,13 +194,46 @@
                         //module.exports = endTime;
                     }
                 }).catch(error => {throw error});
-                speechParams.OutputFormat = "mp3";
+                /*document.getElementById('audioSource').src = url;
                 document.getElementById('audioPlayback').load();
                 document.getElementById('result').innerHTML = "Speech ready to play.";
-                document.getElementById('playButton');
+                document.getElementById('playButton');*/
             }
           });
             }
+            function soundText(){
+                var speechParams = {
+                    OutputFormat: "mp3",
+                    //OutputFormat: "mp3",
+                    //OutputS3BucketName: "casi-bucket",
+                    SampleRate: "16000",
+                    Text: "",
+                    TextType: "text",
+                    VoiceId: "Joanna"
+                    
+                };
+                speechParams.Text = document.getElementById("textEntry").value.toLowerCase(); 
+                console.log(speechParams.Text);
+
+                // Create the Polly service object and presigner object
+                var polly = new AWS.Polly({apiVersion: '2016-06-10'});
+                var signer = new AWS.Polly.Presigner(speechParams, polly);
+
+                // Create presigned URL of synthesized speech file
+                signer.getSynthesizeSpeechUrl(speechParams, function(error, url) {
+                if (error) {
+                    document.getElementById('result').innerHTML = error;
+                } else {
+                    console.log(url);
+                    console.log(signer);
+                    console.log(speechParams);
+                    document.getElementById('audioSource').src = url;
+                    document.getElementById('audioPlayback').load();
+                    document.getElementById('result').innerHTML = "Speech ready to play.";
+                    document.getElementById('playButton');
+                }
+            });
+                };
             var canvas = document.getElementById("renderCanvas");
 var currentGroup;
 var lipSync;
