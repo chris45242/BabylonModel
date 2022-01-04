@@ -182,6 +182,12 @@
                         console.log(time);
                         console.log(startTime);
                         console.log(endTime);
+                        //if viseme equals a or k then use morphtargetmanager to change mouth to a
+                        //if viseme equals e then use morphtargetmanager to change mouth to e
+                        //if viseme equals sil then use morphtargetmanager to change mouth to basis
+                        //if viseme equals u or r then use morphtargetmanager to change mouth to o
+                        //if viseme equals 
+                        //if(viseme == "e"){casiBody.morphTargetManager.getTarget.influence = 1;};
                         //console.log(lipSync);
                         //exports.viseme = viseme;
                         //exports.time = time;
@@ -275,9 +281,9 @@ var createScene = function () {
                 //Get's some of the meshes that are used to make Casi
                 var casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
                 var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
+                var casiTeeth = scene.getMeshByName("Casi's Teeth");
                 /*casiInnerMouth.setEnabled(false);
-                var casiEyes = scene.getMeshByName("Casi's Body.001_primitive1");
-                var casiTeeth = scene.getMeshByName("Casi's Teeth");*/
+                var casiEyes = scene.getMeshByName("Casi's Body.001_primitive1");*/
                 var primitive = scene.getMeshByName("Primitives.001");
                 
                 //Gets Casi's Visor and uses visibility to make it see through glass-like material
@@ -289,28 +295,70 @@ var createScene = function () {
                 let t = 0;
                 var speak = document.getElementById("speaker").innerHTML;
                 console.log(speak);
-                //If speakText button == true then do lipSync function below
-                //speakText();
-                scene.onBeforeRenderObservable.addOnce(function(){
-                    console.log(viseme);
-                });
+                
+                const vowelInput = {
+                    value: 'a',
+                }
+                
+                //Create custom observable for the vowelInput
+                vowelInput.onValueChange = new BABYLON.Observable();
+                
+                //Create function to set current vowel
+                const setCurrentVowel = (value) => {
+                    if(value == vowelInput.value){
+                        return value
+                    } else {
+                        vowelInput.value = value;
+                        vowelInput.onValueChange.notifyObservers(vowelInput.value);
+                    }
+                };
+                
+                //Add callback function to the custom observable
+                vowelInput.onValueChange.add((value) => {
+                    switch (value) {
+                        case 'a': {
+                            // Instead of changing position, you can all lip animations according to the vowel.
+                            casiBody.morphTargetManager.getTarget(12).influence = Math.abs(Math.sin(t));
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = Math.abs(Math.sin(t));
+                            break
+                        }
+                        case 'e': {
+                            //response.position.x = -3;
+                            casiBody.morphTargetManager.getTarget(16).influence = Math.abs(Math.sin(t));
+                            casiTeeth.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
+                            break
+                        }
+                        case 'o':{
+                            casiBody.morphTargetManager.getTarget(11).influence = Math.abs(Math.sin(t));
+                            break
+                        }
+                        case 'i':{
+                            casiBody.morphTargetManager.getTarget(15).influence = 1;
+                            break        
+                        }
+                        case 'u':{
+                            casiBody.morphTargetManager.getTarget(13).influence = 1;
+                            break            
+                        }
+                    }
+                })
+                
+                let idx = 0;
+                const vowels = ['a', 'e', 'o'];
+                // Change current vowel repeatedly
+                setInterval(() => {
+                    setCurrentVowel(vowels[idx]);
+                    idx = (idx + 1) % 2
+                }, 1000);
+                
                 lipSync = scene.onBeforeRenderObservable.add(function(){
-                    
-                    //console.log(viseme);
-                    //console.log(time);
-                    //console.log(startTime);
-                    //console.log(endTime);
-                    //if(viseme == 'e'){casiInnerMouth.morphTargetManager.getTarget()}
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
-                    //Note casiBody morphTarget 5 is casi eyes joyful
-                    //primitive morphTarget 3 is casi mouth A
-                    primitive.morphTargetManager.getTarget(2).influence = Math.abs(Math.sin(t));
-                    casiBody.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
+                    primitive.morphTargetManager.getTarget(3).influence = Math.abs(Math.sin(t));
+                    // Number 11 is shape key O, Number 12 is shape key A,
+                    casiBody.morphTargetManager.getTarget(12).influence = Math.abs(Math.sin(t));
                     //casiBody.morphTargetManager.getTarget(6).influence = 1;
-                    casiInnerMouth.morphTargetManager.getTarget(6).influence = Math.abs(Math.sin(t));
-                    //var getViseme = viseme;
-                    //console.log(getViseme);
-                    //casiInnerMouth.morphTargetManager.getTarget(6).influence = 1;
+                    casiInnerMouth.morphTargetManager.getTarget(12).influence = Math.abs(Math.sin(t));
+                    //casiTeeth.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     //casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.cos(t));
                     t += 0.07;
             });
