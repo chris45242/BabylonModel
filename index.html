@@ -112,8 +112,10 @@
         //export {viseme, time, startTime, endTime};
         //var exports = {};
         var $ = function(id){ return document.getElementById(id);};
-        var finalJson;
+        //var finalJson;
         var viseme, time, startTime, endTime;
+        var data = {};
+        
         // Function invoked by button click
         function speakText() {
             
@@ -150,7 +152,7 @@
                 var itemHTML = "";
                 var hash;
                 //var myJson = [];
-                
+                function getJSON(){
                 fetch(url, headers => 'Content-Type:', 'application/json').then(res => res.text()).then((out) => {
                     var myJson = "["+out;
                     console.log(myJson);
@@ -162,7 +164,7 @@
                     //Gets the last index of a comma and removes it
                     var newJson = str.lastIndexOf(",");
                     str = str.substring(0, newJson);
-                    finalJson = str+"]";
+                    var finalJson = str+"]";
                     //console.log(finalJson);
                     var jsonParsed = JSON.parse(finalJson);
                     console.log(jsonParsed);
@@ -182,6 +184,7 @@
                         console.log(time);
                         console.log(startTime);
                         console.log(endTime);
+                        data.myStartTime = startTime;
                         //if viseme equals a or k then use morphtargetmanager to change mouth to a
                         //if viseme equals e then use morphtargetmanager to change mouth to e
                         //if viseme equals sil then use morphtargetmanager to change mouth to basis
@@ -198,12 +201,14 @@
                         //module.exports = time;
                         //module.exports = startTime;
                         //module.exports = endTime;
+                        
                     }
                 }).catch(error => {throw error});
                 /*document.getElementById('audioSource').src = url;
                 document.getElementById('audioPlayback').load();
                 document.getElementById('result').innerHTML = "Speech ready to play.";
                 document.getElementById('playButton');*/
+                };
             }
           });
             }
@@ -245,7 +250,8 @@ var currentGroup;
 var lipSync;
 
  
-var createScene = function () {
+var createScene = function (againJson) {
+    console.log(againJson);
     var scene = new BABYLON.Scene(engine);
     //var layer = new BABYLON.Layer('', "Cyber_Background.jpg", scene, true);
     //var hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("textures/environment.dds", scene);
@@ -264,6 +270,9 @@ var createScene = function () {
         var scales = [];
 	var url;
 	var fileName;
+        //speakText();
+        console.log(viseme);
+        console.log(data.myStartTime);
         
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
         fileName = "project.blend1.gltf";
@@ -300,13 +309,15 @@ var createScene = function () {
                     value: 'a',
                 }
                 
+                t += 0.07;
+                
                 //Create custom observable for the vowelInput
                 vowelInput.onValueChange = new BABYLON.Observable();
-                
+                console.log(casiBody.morphTargetManager.getPositions);
                 //Create function to set current vowel
                 const setCurrentVowel = (value) => {
-                    if(value == vowelInput.value){
-                        return value
+                    if(value === vowelInput.value){
+                        return value;
                     } else {
                         vowelInput.value = value;
                         vowelInput.onValueChange.notifyObservers(vowelInput.value);
@@ -341,17 +352,17 @@ var createScene = function () {
                             break            
                         }
                     }
-                })
+                });
                 
                 let idx = 0;
                 const vowels = ['a', 'e', 'o'];
                 // Change current vowel repeatedly
                 setInterval(() => {
                     setCurrentVowel(vowels[idx]);
-                    idx = (idx + 1) % 2
+                    idx = (idx + 1) % 2;
                 }, 1000);
                 
-                lipSync = scene.onBeforeRenderObservable.add(function(){
+                /*lipSync = scene.onBeforeRenderObservable.add(function(){
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     primitive.morphTargetManager.getTarget(3).influence = Math.abs(Math.sin(t));
                     // Number 11 is shape key O, Number 12 is shape key A,
@@ -361,7 +372,7 @@ var createScene = function () {
                     //casiTeeth.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     //casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.cos(t));
                     t += 0.07;
-            });
+            });*/
     
 	});
     return scene;
