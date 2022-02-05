@@ -115,6 +115,7 @@
         //var finalJson;
         var viseme, time, startTime, endTime;
         var data = {};
+        var passJSON, againJson;
         
         // Function invoked by button click
         function speakText() {
@@ -152,7 +153,7 @@
                 var itemHTML = "";
                 var hash;
                 //var myJson = [];
-                function getJSON(){
+                
                 fetch(url, headers => 'Content-Type:', 'application/json').then(res => res.text()).then((out) => {
                     var myJson = "["+out;
                     console.log(myJson);
@@ -164,9 +165,9 @@
                     //Gets the last index of a comma and removes it
                     var newJson = str.lastIndexOf(",");
                     str = str.substring(0, newJson);
-                    var finalJson = str+"]";
+                    againJson = str+"]";
                     //console.log(finalJson);
-                    var jsonParsed = JSON.parse(finalJson);
+                    var jsonParsed = JSON.parse(againJson);
                     console.log(jsonParsed);
                     console.log(jsonParsed[0]['value']);
                     console.log(jsonParsed.length);
@@ -180,11 +181,11 @@
                         time = jsonParsed[i]['time'];
                         startTime = jsonParsed[i]['start'];
                         endTime = jsonParsed[i]['end'];
-                        console.log(viseme);
-                        console.log(time);
-                        console.log(startTime);
-                        console.log(endTime);
-                        data.myStartTime = startTime;
+                        //console.log(viseme);
+                        //console.log(time);
+                        //console.log(startTime);
+                        //console.log(endTime);
+                        processJSON(againJson, viseme, time, startTime, endTime);
                         //if viseme equals a or k then use morphtargetmanager to change mouth to a
                         //if viseme equals e then use morphtargetmanager to change mouth to e
                         //if viseme equals sil then use morphtargetmanager to change mouth to basis
@@ -201,14 +202,29 @@
                         //module.exports = time;
                         //module.exports = startTime;
                         //module.exports = endTime;
-                        
+                        //console.log(againJson);
+                        //return againJson;
                     }
+                    
                 }).catch(error => {throw error});
+                function processJSON(passJSON, newViseme, newTime, newStartTime, newEndTime){
+                            passJSON.value = againJson;
+                            newViseme.value = viseme;
+                            newTime.value = time;
+                            newStartTime.value = startTime;
+                            newEndTime.value = endTime;
+                            console.log(newViseme);
+                            console.log(passJSON);
+                        }
+                /*fetch(againJson, {
+                    method: "POST", 
+                    headers: {"Content-Type": "application/json; charset=UTF-8"
+                    }
+                }).catch(error => {throw error});*/
                 /*document.getElementById('audioSource').src = url;
                 document.getElementById('audioPlayback').load();
                 document.getElementById('result').innerHTML = "Speech ready to play.";
                 document.getElementById('playButton');*/
-                };
             }
           });
             }
@@ -250,8 +266,9 @@ var currentGroup;
 var lipSync;
 
  
-var createScene = function (againJson) {
-    console.log(againJson);
+var createScene = function () {
+    //speakText(againJson);
+    console.log(viseme);
     var scene = new BABYLON.Scene(engine);
     //var layer = new BABYLON.Layer('', "Cyber_Background.jpg", scene, true);
     //var hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("textures/environment.dds", scene);
@@ -381,12 +398,28 @@ var createScene = function (againJson) {
 var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
 
 var scene = createScene();
+var renderLoop = function(){
+    scene.render();
+};
+engine.runRenderLoop(renderLoop);
+function update(progress){
+    //Update the state of the world for the elapsed time since last render
+    
+};
+//Might not need function draw because I think the state of the world means the default scene
+//function draw(){
+    //Draw the state of the world
+    
+//};
 
-   engine.runRenderLoop(function () {
-	if (scene) {
-		scene.render();
-	}
-});
+function loop(timestamp){
+    
+};
+  // engine.runRenderLoop(function () {
+	
+	//scene.render();
+	
+//});
     </script>
 </body>
 </html>
