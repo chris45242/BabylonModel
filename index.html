@@ -181,11 +181,16 @@
                         time = jsonParsed[i]['time'];
                         startTime = jsonParsed[i]['start'];
                         endTime = jsonParsed[i]['end'];
+                        var timeLapsed = 0;
                         //console.log(viseme);
                         //console.log(time);
                         //console.log(startTime);
                         //console.log(endTime);
-                        processJSON(againJson, viseme, time, startTime, endTime);
+                        //processJSON(againJson, viseme, time, startTime, endTime);
+                        
+                        //calls function loop and passes in timeLapsed, againJson, viseme,
+                        //time, startTime, and endTime as parameters.
+                        loop(timeLapsed, againJson, viseme, time, startTime, endTime);
                         //if viseme equals a or k then use morphtargetmanager to change mouth to a
                         //if viseme equals e then use morphtargetmanager to change mouth to e
                         //if viseme equals sil then use morphtargetmanager to change mouth to basis
@@ -207,7 +212,7 @@
                     }
                     
                 }).catch(error => {throw error});
-                function processJSON(passJSON, newViseme, newTime, newStartTime, newEndTime){
+               /* function processJSON(passJSON, newViseme, newTime, newStartTime, newEndTime){
                             passJSON.value = againJson;
                             newViseme.value = viseme;
                             newTime.value = time;
@@ -215,7 +220,7 @@
                             newEndTime.value = endTime;
                             console.log(newViseme);
                             console.log(passJSON);
-                        }
+                        }*/
                 /*fetch(againJson, {
                     method: "POST", 
                     headers: {"Content-Type": "application/json; charset=UTF-8"
@@ -266,9 +271,7 @@ var currentGroup;
 var lipSync;
 
  
-var createScene = function () {
-    //speakText(againJson);
-    console.log(viseme);
+var createScene = function() {
     var scene = new BABYLON.Scene(engine);
     //var layer = new BABYLON.Layer('', "Cyber_Background.jpg", scene, true);
     //var hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("textures/environment.dds", scene);
@@ -282,14 +285,10 @@ var createScene = function () {
 		light.intensity = 0.7;
     var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, scene);
     ground.receiveShadows = true;
-    var gui;
         
         var scales = [];
 	var url;
 	var fileName;
-        //speakText();
-        console.log(viseme);
-        console.log(data.myStartTime);
         
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
         fileName = "project.blend1.gltf";
@@ -320,9 +319,8 @@ var createScene = function () {
                 //Set up Morph Targets for Casi before the screen is done loading.
                 let t = 0;
                 var speak = document.getElementById("speaker").innerHTML;
-                console.log(speak);
                 
-                const vowelInput = {
+                /*const vowelInput = {
                     value: 'a',
                 }
                 
@@ -377,9 +375,9 @@ var createScene = function () {
                 setInterval(() => {
                     setCurrentVowel(vowels[idx]);
                     idx = (idx + 1) % 2;
-                }, 1000);
+                }, 1000);*/
                 
-                /*lipSync = scene.onBeforeRenderObservable.add(function(){
+                scene.onBeforeRenderObservable.add(function(){
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     primitive.morphTargetManager.getTarget(3).influence = Math.abs(Math.sin(t));
                     // Number 11 is shape key O, Number 12 is shape key A,
@@ -389,7 +387,7 @@ var createScene = function () {
                     //casiTeeth.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     //casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.cos(t));
                     t += 0.07;
-            });*/
+            });
     
 	});
     return scene;
@@ -412,14 +410,24 @@ function update(progress){
     
 //};
 
-function loop(timestamp){
+function loop(timestamp, passJson, newViseme, newTime, newStartTime, newEndTime){
+    //timestamp.value = timeLapsed;
+    passJson.value = againJson;
+    newViseme.value = viseme;
+    newStartTime.value = startTime;
+    newEndTime.value = endTime;
+    console.log(passJson);
+    console.log(newViseme);
+    console.log(newTime);
+    console.log(newStartTime);
+    console.log(newEndTime);
     
 };
-  // engine.runRenderLoop(function () {
+   engine.runRenderLoop(function () {
 	
-	//scene.render();
+	scene.render();
 	
-//});
+});
     </script>
 </body>
 </html>
