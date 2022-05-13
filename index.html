@@ -109,13 +109,10 @@
     <input type="button" id="playButton" value="Play">
     <script type="text/javascript" src="config.js"></script>
     <script type="text/javascript">
-        //export {viseme, time, startTime, endTime};
-        //var exports = {};
         var $ = function(id){ return document.getElementById(id);};
-        //var finalJson;
         var viseme, time, startTime, endTime;
         var data = {};
-        var passJSON, againJson;
+        var passJSON, againJson, timeLapsed;
         
         // Function invoked by button click
         function speakText() {
@@ -147,13 +144,6 @@
                 console.log(url);
                 console.log(signer);
                 
-                //var selectedText = "";
-                var bracket = "}";
-                var jsonIndex = -1;
-                var itemHTML = "";
-                var hash;
-                //var myJson = [];
-                
                 fetch(url, headers => 'Content-Type:', 'application/json').then(res => res.text()).then((out) => {
                     var myJson = "["+out;
                     console.log(myJson);
@@ -166,22 +156,21 @@
                     var newJson = str.lastIndexOf(",");
                     str = str.substring(0, newJson);
                     againJson = str+"]";
-                    //console.log(finalJson);
                     var jsonParsed = JSON.parse(againJson);
                     console.log(jsonParsed);
                     console.log(jsonParsed[0]['value']);
                     console.log(jsonParsed.length);
                     for(var i = 0; i < jsonParsed.length; i++){
                         viseme = jsonParsed[i]['value'];
-                        if(viseme.includes('e')){console.log("got it");}
-                        if(viseme.includes('a')){console.log("Gimme an a");}
-                        if(viseme.includes('i')){console.log("Here's an e");}
-                        if(viseme.includes('u')){console.log("Found a u");}
-                        if(viseme.includes('o')){console.log("I see an o");}
+                        //if(viseme.includes('e')){console.log("got it");}
+                        //if(viseme.includes('a')){console.log("Gimme an a");}
+                        //if(viseme.includes('i')){console.log("Here's an e");}
+                        //if(viseme.includes('u')){console.log("Found a u");}
+                        //if(viseme.includes('o')){console.log("I see an o");}
                         time = jsonParsed[i]['time'];
                         startTime = jsonParsed[i]['start'];
                         endTime = jsonParsed[i]['end'];
-                        var timeLapsed = 0;
+                        timeLapsed = endTime - startTime;
                         //console.log(viseme);
                         //console.log(time);
                         //console.log(startTime);
@@ -189,26 +178,12 @@
                         //processJSON(againJson, viseme, time, startTime, endTime);
                         
                         //calls function loop and passes in timeLapsed, againJson, viseme,
-                        //time, startTime, and endTime as parameters.
-                        loop(timeLapsed, againJson, viseme, time, startTime, endTime);
+                        //and time as parameters.
+                        loop(timeLapsed, againJson, viseme, time);
                         //if viseme equals a or k then use morphtargetmanager to change mouth to a
                         //if viseme equals e then use morphtargetmanager to change mouth to e
                         //if viseme equals sil then use morphtargetmanager to change mouth to basis
                         //if viseme equals u or r then use morphtargetmanager to change mouth to o
-                        //if viseme equals 
-                        //if(viseme == "e"){casiBody.morphTargetManager.getTarget.influence = 1;};
-                        //console.log(lipSync);
-                        //exports.viseme = viseme;
-                        //exports.time = time;
-                        //exports.startTime = startTime;
-                        //exports.endTime = endTime;
-                        //return viseme, time, startTime, endTime;
-                        //module.exports = viseme;
-                        //module.exports = time;
-                        //module.exports = startTime;
-                        //module.exports = endTime;
-                        //console.log(againJson);
-                        //return againJson;
                     }
                     
                 }).catch(error => {throw error});
@@ -236,7 +211,6 @@
             function soundText(){
                 var speechParams = {
                     OutputFormat: "mp3",
-                    //OutputFormat: "mp3",
                     //OutputS3BucketName: "casi-bucket",
                     SampleRate: "16000",
                     Text: "",
@@ -268,7 +242,8 @@
                 };
             var canvas = document.getElementById("renderCanvas");
 var currentGroup;
-var lipSync;
+//var lipSync;
+let t = 0;
 
  
 var createScene = function() {
@@ -317,77 +292,32 @@ var createScene = function() {
                 casiVisor.visibility = 0.7;
                 
                 //Set up Morph Targets for Casi before the screen is done loading.
-                let t = 0;
+                //let t = 0;
                 var speak = document.getElementById("speaker").innerHTML;
-                
-                /*const vowelInput = {
-                    value: 'a',
-                }
-                
-                t += 0.07;
-                
-                //Create custom observable for the vowelInput
-                vowelInput.onValueChange = new BABYLON.Observable();
-                console.log(casiBody.morphTargetManager.getPositions);
-                //Create function to set current vowel
-                const setCurrentVowel = (value) => {
-                    if(value === vowelInput.value){
-                        return value;
-                    } else {
-                        vowelInput.value = value;
-                        vowelInput.onValueChange.notifyObservers(vowelInput.value);
-                    }
-                };
-                
-                //Add callback function to the custom observable
-                vowelInput.onValueChange.add((value) => {
-                    switch (value) {
-                        case 'a': {
-                            // Instead of changing position, you can all lip animations according to the vowel.
-                            casiBody.morphTargetManager.getTarget(12).influence = Math.abs(Math.sin(t));
-                            casiInnerMouth.morphTargetManager.getTarget(12).influence = Math.abs(Math.sin(t));
-                            break
-                        }
-                        case 'e': {
-                            //response.position.x = -3;
-                            casiBody.morphTargetManager.getTarget(16).influence = Math.abs(Math.sin(t));
-                            casiTeeth.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
-                            break
-                        }
-                        case 'o':{
-                            casiBody.morphTargetManager.getTarget(11).influence = Math.abs(Math.sin(t));
-                            break
-                        }
-                        case 'i':{
-                            casiBody.morphTargetManager.getTarget(15).influence = 1;
-                            break        
-                        }
-                        case 'u':{
-                            casiBody.morphTargetManager.getTarget(13).influence = 1;
-                            break            
-                        }
-                    }
-                });
-                
-                let idx = 0;
-                const vowels = ['a', 'e', 'o'];
-                // Change current vowel repeatedly
-                setInterval(() => {
-                    setCurrentVowel(vowels[idx]);
-                    idx = (idx + 1) % 2;
-                }, 1000);*/
                 
                 scene.onBeforeRenderObservable.add(function(){
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
-                    primitive.morphTargetManager.getTarget(3).influence = Math.abs(Math.sin(t));
+                    //Note morphTarget #11 is shape key o, #12 is shape key a
+                    //primitive.morphTargetManager.getTarget(4).influence = Math.abs(Math.sin(t));
                     // Number 11 is shape key O, Number 12 is shape key A,
-                    casiBody.morphTargetManager.getTarget(12).influence = Math.abs(Math.sin(t));
+                    //casiBody.morphTargetManager.getTarget(12).influence = Math.abs(Math.sin(t));
                     //casiBody.morphTargetManager.getTarget(6).influence = 1;
-                    casiInnerMouth.morphTargetManager.getTarget(12).influence = Math.abs(Math.sin(t));
+                    //casiInnerMouth.morphTargetManager.getTarget(12).influence = Math.abs(Math.sin(t));
                     //casiTeeth.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     //casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.cos(t));
-                    t += 0.07;
+                    //t += 0.07;
             });
+            
+            //Used to lip Sync Casi with what she says
+            /*function lipSync(){
+                
+            };*/
+                /*scene.onAfterRenderObservable.add(function(){
+                    primitive.morphTargetManager.getTarget(4).influence = Math.abs(Math.sin(t));
+                    casiBody.morphTargetManager.getTarget(12).influence = Math.abs(Math.sin(t));
+                    casiInnerMouth.morphTargetManager.getTarget(12).influence = Math.abs(Math.sin(t));
+                    t += 0.07;
+                });*/
     
 	});
     return scene;
@@ -398,7 +328,21 @@ var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, ste
 var scene = createScene();
 var renderLoop = function(){
     scene.render();
+    //I can get the meshes that are Casi's lips and the primitive here and use them 
+    //for lip syncing here as well
+    var casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
+    var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
+    var casiTeeth = scene.getMeshByName("Casi's Teeth");
+    var primitive = scene.getMeshByName("Primitives.001");
+    console.log(casiBody);
+    //use if statements for based on what the viseme is that's the lip position
+    //that Casi's lips will take (or the position Casi's lips will be in)
+    t += 0.07;
+    
 };
+
+//Why don't I use the runRenderLoop function to lip sync casi since It runs continuously
+//I can get casi's lips in the renderloop function
 engine.runRenderLoop(renderLoop);
 function update(progress){
     //Update the state of the world for the elapsed time since last render
@@ -410,17 +354,18 @@ function update(progress){
     
 //};
 
-function loop(timestamp, passJson, newViseme, newTime, newStartTime, newEndTime){
-    //timestamp.value = timeLapsed;
+function loop(timestamp, passJson, newViseme, newTime){
+    timestamp.value = timeLapsed;
     passJson.value = againJson;
     newViseme.value = viseme;
-    newStartTime.value = startTime;
-    newEndTime.value = endTime;
     console.log(passJson);
     console.log(newViseme);
     console.log(newTime);
-    console.log(newStartTime);
-    console.log(newEndTime);
+    console.log(timestamp);
+    //var inputMap = {};
+    //var lipSync = new Animation(viseme, casiInnerMouth);
+    //scene.beginDirectAnimation(CasiInnerMouth);
+    //lipSync();
     
 };
   /* engine.runRenderLoop(function () {
@@ -428,6 +373,25 @@ function loop(timestamp, passJson, newViseme, newTime, newStartTime, newEndTime)
 	scene.render();
 	
 });*/
+    
+/*
+ Example of calling a function and passing parameters
+ call function loop and passes in parameters timeLapsed, againJson, viseme, and time
+    so that they can be used in the function loop
+    
+time = jsonParsed[i]['time'];
+againJson = str+"]";
+viseme = jsonParsed[i]['value'];
+timeLapsed = endTime - startTime;
+    
+loop(timeLapsed, againJson, viseme, time);
+ 
+function loop(timestamp, passJson, newViseme, newTime){}
+    
+    rename timeLapsed to timestamp, rename againJson to passJson, rename viseme to newViseme,
+    and rename time to newTime when doing everything inside the function loop
+    function loop(timestamp, passJson, newViseme, newTime)
+ */
     </script>
 </body>
 </html>
