@@ -326,7 +326,7 @@ var createScene = function() {
 var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
 
 var scene = createScene();
-var renderLoop = function(){
+var renderLoop = function(finalTimestamp, finalViseme){
     scene.render();
     //I can get the meshes that are Casi's lips and the primitive here and use them 
     //for lip syncing here as well
@@ -334,7 +334,13 @@ var renderLoop = function(){
     var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
     var casiTeeth = scene.getMeshByName("Casi's Teeth");
     var primitive = scene.getMeshByName("Primitives.001");
-    console.log(casiBody);
+    //if(finalTimestamp != 0 && finalViseme != null){
+        //if finalViseme equals E the set casi's lip position to E
+        //else if finalViseme equals A set casi's lip position to A
+        //else if finalViseme equals O then set Casi's lip position to O
+    //}
+    console.log(finalViseme);
+    //console.log(casiBody);
     //use if statements for based on what the viseme is that's the lip position
     //that Casi's lips will take (or the position Casi's lips will be in)
     t += 0.07;
@@ -362,6 +368,7 @@ function loop(timestamp, passJson, newViseme, newTime){
     console.log(newViseme);
     console.log(newTime);
     console.log(timestamp);
+    engine.runRenderLoop(renderLoop(timestamp, newViseme));
     //var inputMap = {};
     //var lipSync = new Animation(viseme, casiInnerMouth);
     //scene.beginDirectAnimation(CasiInnerMouth);
