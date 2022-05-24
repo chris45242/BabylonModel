@@ -243,7 +243,7 @@
             var canvas = document.getElementById("renderCanvas");
 var currentGroup;
 //var lipSync;
-let t = 0;
+//let t = 0;
 
  
 var createScene = function() {
@@ -295,7 +295,7 @@ var createScene = function() {
                 //let t = 0;
                 var speak = document.getElementById("speaker").innerHTML;
                 
-                scene.onBeforeRenderObservable.add(function(){
+                //scene.onBeforeRenderObservable.add(function(){
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     //Note morphTarget #11 is shape key o, #12 is shape key a
                     //primitive.morphTargetManager.getTarget(4).influence = Math.abs(Math.sin(t));
@@ -306,7 +306,7 @@ var createScene = function() {
                     //casiTeeth.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     //casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.cos(t));
                     //t += 0.07;
-            });
+            //});
             
             //Used to lip Sync Casi with what she says
             /*function lipSync(){
@@ -326,24 +326,32 @@ var createScene = function() {
 var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
 
 var scene = createScene();
-var renderLoop = function(finalTimestamp, finalViseme){
+var renderLoop = function(finalTimeStamp, finalViseme){
     scene.render();
     //I can get the meshes that are Casi's lips and the primitive here and use them 
     //for lip syncing here as well
-    var casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
+    /*var casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
     var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
     var casiTeeth = scene.getMeshByName("Casi's Teeth");
     var primitive = scene.getMeshByName("Primitives.001");
+    if(finalViseme == 'e'){
+        casiBody.morphTargetManager.getTarget(14).influence = finalTimeStamp;//morph target 14 might be shape key e
+        primitive.morphTargetManager.getTarget(6).influence = finalTimeStamp;//morph target 6 for primitive might be shape key e
+    }
+    else if(finalViseme == 'a'){
+        casiBody.morphTargetManager.getTarget(12).influence = finalTimeStamp;
+        //primitive.morphTargetManager.getTarget().influence = Math.abs(Math.sin(finalTimeStamp));
+    }
     //if(finalTimestamp != 0 && finalViseme != null){
-        //if finalViseme equals E the set casi's lip position to E
+        //if finalViseme equals i the set casi's lip position to E
         //else if finalViseme equals A set casi's lip position to A
         //else if finalViseme equals O then set Casi's lip position to O
     //}
-    console.log(finalViseme);
+    console.log(finalViseme);*/
     //console.log(casiBody);
     //use if statements for based on what the viseme is that's the lip position
     //that Casi's lips will take (or the position Casi's lips will be in)
-    t += 0.07;
+    //t += 0.07;
     
 };
 
@@ -352,13 +360,17 @@ var renderLoop = function(finalTimestamp, finalViseme){
 engine.runRenderLoop(renderLoop);
 function update(progress){
     //Update the state of the world for the elapsed time since last render
+    console.log(progress);
+    draw();
     
 };
 //Might not need function draw because I think the state of the world means the default scene
-//function draw(){
+function draw(){
     //Draw the state of the world
+    var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
+    console.log(casiInnerMouth);
     
-//};
+};
 
 function loop(timestamp, passJson, newViseme, newTime){
     timestamp.value = timeLapsed;
@@ -366,9 +378,10 @@ function loop(timestamp, passJson, newViseme, newTime){
     newViseme.value = viseme;
     console.log(passJson);
     console.log(newViseme);
-    console.log(newTime);
+    //console.log(newTime);
     console.log(timestamp);
-    engine.runRenderLoop(renderLoop(timestamp, newViseme));
+    update(newTime);
+    //engine.runRenderLoop(renderLoop(timestamp, newViseme));
     //var inputMap = {};
     //var lipSync = new Animation(viseme, casiInnerMouth);
     //scene.beginDirectAnimation(CasiInnerMouth);
