@@ -243,7 +243,7 @@
             var canvas = document.getElementById("renderCanvas");
 var currentGroup;
 //var lipSync;
-//let t = 0;
+let t = 0;
 
  
 var createScene = function() {
@@ -268,15 +268,15 @@ var createScene = function() {
         url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
         fileName = "project.blend1.gltf";
    
-        var Casi = BABYLON.SceneLoader.Append(url, fileName, scene, function (scene){
+        const Casi = BABYLON.SceneLoader.Append(url, fileName, scene, function (scene){
                 // Create a default arc rotate camera and light.
                 scene.createDefaultCameraOrLight(true, true, true);
                 scene.activeCamera.alpha += Math.PI;
                 
                 scene.stopAllAnimations();
 
-		scene.animationGroups[0].start(true); 
-                scene.animationGroups[1].start(true);
+		//scene.animationGroups[0].start(true); 
+                //scene.animationGroups[1].start(true);
 
                 //Get's some of the meshes that are used to make Casi
                 var casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
@@ -294,7 +294,63 @@ var createScene = function() {
                 //Set up Morph Targets for Casi before the screen is done loading.
                 //let t = 0;
                 var speak = document.getElementById("speaker").innerHTML;
-                
+
+                const lipSync = 'a';
+                const vowelInput = {
+                    value: lipSync
+                };
+
+                // Create custom observable for the 'vowelInput' 
+                vowelInput.onValueChange = new BABYLON.Observable();
+
+                // Create function to set current vowel
+                const setCurrentVowel = (value) => {
+                    if (value === vowelInput.value) {
+                        return value;
+                    } else {
+                        vowelInput.value = value;
+                        console.log("test");
+                        vowelInput.onValueChange.notifyObservers(vowelInput.value);
+                    }
+                };
+
+                // Add callback function to the custom observable 
+                vowelInput.onValueChange.add((value) => {
+                    switch (value) {
+                        case 'a': {
+                            // Instead of changing position, you can all lip animations according to the vowel.
+                            casiBody.morphTargetManager.getTarget(12).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = 1;
+
+                            casiBody.morphTargetManager.getTarget(14).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
+                            casiTeeth.morphTargetManager.getTarget(0).influence = 0;
+                            break
+                        }
+                        case 'e': {
+                            casiBody.morphTargetManager.getTarget(14).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(14).influence = 1;
+                            casiTeeth.morphTargetManager.getTarget(0).influence = 1;
+
+                            casiBody.morphTargetManager.getTarget(12).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
+                            break
+                        }
+                    }
+                });
+
+                let idx = 0;
+                const vowels = ['a', 'e'];
+                // Change current vowel repeatedly
+                const inter = setInterval(() => {
+                    setCurrentVowel(vowels[idx]);
+                    idx = (idx + 1) % 2;
+                }, 1000);
+
+                scene.onDisposeObservable.add(() => {
+                    clearInterval(inter);
+                });
+
                 //scene.onBeforeRenderObservable.add(function(){
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     //Note morphTarget #11 is shape key o, #12 is shape key a
@@ -358,17 +414,71 @@ var renderLoop = function(finalTimeStamp, finalViseme){
 //Why don't I use the runRenderLoop function to lip sync casi since It runs continuously
 //I can get casi's lips in the renderloop function
 engine.runRenderLoop(renderLoop);
-function update(progress){
+function update(progress, lipViseme){
     //Update the state of the world for the elapsed time since last render
-    console.log(progress);
-    draw();
+    
+    //A mesh exists in a completely different construct from an animation or two different things
+    //An animation needs to know I need to apply the certain number of values to the mesh
+    //So the animation knows about the mesh but the mesh isn't aware of any animations in the 
+    //scene (really important to know) because if I click on a mesh I can't just say hey play 
+    //an animation I have to know which animation in the scene to play so I need to 
+    //manage a relationship between the mesh and the associateed animation I want to associate it with
+    //var anim = BABYLON.MorphTarget.FromMesh(casiBody, "Casi's Body.001_primitive0", 0.2);
+    var keys = [];
+    
+    
+    
+    //Create a function to set the current viseme
+    /*function setCurrentVowel(value){
+        console.log(value);
+        if(value === vowelInput.value){
+            console.log(value);
+            return value;
+       } else{
+           vowelInput.value = value;
+           vowelInput.onValueChange.notifyObservers(vowelInput.value);
+       }
+    };*/
+    //Create a function to set the current viseme
+    /*const setCurrentVowel = (value) => {
+        console.log(setCurrentVowel);
+        if(value === vowelInput.value){
+            console.log(value);
+            return value;
+        }
+        else{
+            vowelInput.value = value;
+            vowelInput.onValueChange.notifyObservers(vowelInput.value);
+        }
+    };*/
+    
+    
+    /*let idx = 0;
+    const vowels = ['a', 'e'];
+    // Change current vowel repeatedly
+    setInterval(() => {
+        setCurrentVowel(vowels[idx]);
+        idx = (idx + 1) % 2;
+    }, 1000);*/
+    //casiInnerMouth.morphTargetManager.getTarget(14).influence = progress; 
+    //casiBody.morphTargetManager.getTarget(14).influence = progress;
+    //console.log(casiBody);
+    //var casiInnerMouth.morphTargetManager.getTarget(12).influence = progress;
+    //draw();
     
 };
+
+
 //Might not need function draw because I think the state of the world means the default scene
 function draw(){
     //Draw the state of the world
+    /*var casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
     var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
-    console.log(casiInnerMouth);
+    var primitive = scene.getMeshByName("Primitives.001");
+    var casiTeeth = scene.getMeshByName("Casi's Teeth");
+    casiInnerMouth.morphTargetManager.getTarget(14).influence = 1; 
+    casiBody.morphTargetManager.getTarget(14).influence = 1;*/
+    //console.log(casiInnerMouth);
     
 };
 
@@ -377,10 +487,49 @@ function loop(timestamp, passJson, newViseme, newTime){
     passJson.value = againJson;
     newViseme.value = viseme;
     console.log(passJson);
-    console.log(newViseme);
+    //console.log(newViseme);
     //console.log(newTime);
     console.log(timestamp);
-    update(newTime);
+    /*const casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
+    const casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
+    const primitive = scene.getMeshByName("Primitives.001");
+    const casiTeeth = scene.getMeshByName("Casi's Teeth");
+    const vowelInput = {
+        value: newViseme
+    };*/
+    
+    //Try creating an animation curve like how its done in babylonjs playground
+    //and based on what visemes occur at what time those dots (visemes to play)
+    //will be placed in those spots
+    
+    //Create a custom observerable for the viseme input
+    /*vowelInput.onValueChange = new BABYLON.Observable();
+    console.log(vowelInput.onValueChange);
+    var anim = scene.getAnimationGroupByName("Key.002Action").targetedAnimations;
+    console.log(anim);
+    
+    vowelInput.onValueChange.add((value) => {
+        console.log(value);
+        if(value === 'e'){
+            console.log(value);
+            casiBody.morphTargetManager.getTarget(14).influence = 1;
+            
+        }
+        if(value === 'u'){
+            console.log(value);
+            casiBody.morphTargetManager.getTarget(13).influence = 1;
+        }
+        
+        let idx = 0;
+        const vowels = ['a', 'e'];
+        // Change current vowel repeatedly
+        setInterval(() => {
+            setCurrentVowel(vowels[idx]);
+            idx = (idx + 1) % 2;
+        }, 1000);
+        
+    });*/
+    //update(newTime, newViseme);
     //engine.runRenderLoop(renderLoop(timestamp, newViseme));
     //var inputMap = {};
     //var lipSync = new Animation(viseme, casiInnerMouth);
