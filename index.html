@@ -100,7 +100,7 @@
    
     <div id="textToSynth">
       <input autofocus size="23" type="text" id="textEntry" value="It's very good to meet you."/>
-      <button id="speaker" class="btn default" onClick="speakText(); soundText();">Synthesize</button>
+      <button id="speaker" class="btn default" onClick="soundText();">Synthesize</button>
       <p id="result">Enter text above then click Synthesize</p>
     </div>
     <audio id="audioPlayback" autoplay>
@@ -277,6 +277,7 @@ var createScene = function() {
 
 		//scene.animationGroups[0].start(true); 
                 //scene.animationGroups[1].start(true);
+                //console.log(scene.animationGroups[0]);
 
                 //Get's some of the meshes that are used to make Casi
                 var casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
@@ -285,6 +286,9 @@ var createScene = function() {
                 /*casiInnerMouth.setEnabled(false);
                 var casiEyes = scene.getMeshByName("Casi's Body.001_primitive1");*/
                 var primitive = scene.getMeshByName("Primitives.001");
+                var secondPrimitive = scene.getMeshByName("Primitives.002");
+                secondPrimitive.setEnabled(true);
+                secondPrimitive.visibility = 1;
                 
                 //Gets Casi's Visor and uses visibility to make it see through glass-like material
                 var casiVisor = scene.getMeshByName("Casi's Visor");
@@ -293,12 +297,28 @@ var createScene = function() {
                 
                 //Set up Morph Targets for Casi before the screen is done loading.
                 //let t = 0;
-                var speak = document.getElementById("speaker").innerHTML;
-
+                
+                //perhaps I could move the button that calls the speakText funciton 
+                //into the createScene function 
+                
+                var speakButton = document.getElementById("speaker");
+                //speakButton.textContent = "Speak";
+                //speakButton.style.position = "absolute";
+                //speakButton.style.zIndex = 1000;
+                //speakButton.style.xIndex = 100;
+                //console.log(viseme);
+                speakButton.addEventListener("click", function(){
+                    console.log("click");
+                    speakText();
+                });
+                //canvas.parentElement.appendChild(speakButton);
+                console.log(speakButton);
+                console.log(speakButton.position);
                 const lipSync = 'a';
                 const vowelInput = {
                     value: lipSync
                 };
+                console.log(lipSync);
 
                 // Create custom observable for the 'vowelInput' 
                 vowelInput.onValueChange = new BABYLON.Observable();
@@ -306,52 +326,192 @@ var createScene = function() {
                 // Create function to set current vowel
                 const setCurrentVowel = (value) => {
                     if (value === vowelInput.value) {
+                        console.log(value);
                         return value;
                     } else {
                         vowelInput.value = value;
                         console.log("test");
+                        console.log(value);
                         vowelInput.onValueChange.notifyObservers(vowelInput.value);
                     }
                 };
 
                 // Add callback function to the custom observable 
                 vowelInput.onValueChange.add((value) => {
+                    console.log(value);
+                    /*if(value === 'a'){
+                        casiBody.morphTargetManager.getTarget(12).influence = 1;
+                        casiInnerMouth.morphTargetManager.getTarget(12).influence = 1;
+                        primitive.morphTargetManager.getTarget(3).influence = 1;
+                        
+                        //reset Casi's lip positions
+                        casiBody.morphTargetManager.getTarget(12).influence = 0;
+                        casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
+                        primitive.morphTargetManager.getTarget(3).influence = 0;
+                        return;
+                    }
+                    else if(value === 'e'){
+                        casiBody.morphTargetManager.getTarget(14).influence = 1;
+                        casiInnerMouth.morphTargetManager.getTarget(14).influence = 1;
+                        casiTeeth.morphTargetManager.getTarget(0).influence = 1;
+                        primitive.morphTargetManager.getTarget(5).influence = 1;
+                        
+                        //reset Casi's lip positions
+                        /*casiBody.morphTargetManager.getTarget(14).influence = 0;
+                        casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
+                        casiTeeth.morphTargetManager.getTarget(0).influence = 0;
+                        primitive.morphTargetManager.getTarget(5).influence = 0;
+                        return;
+                       
+                    }
+                    else if(value === 'o'){
+                        casiBody.morphTargetManager.getTarget(11).influence = 1;
+                        casiInnerMouth.morphTargetManager.getTarget(11).influence = 1;
+                        primitive.morphTargetManager.getTarget(2).influence = 1;
+                        
+                        //reset Casi's lip positions
+                        /*casiBody.morphTargetManager.getTarget(11).influence = 0;
+                        casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
+                        primitive.morphTargetManager.getTarget(2).influence = 0;
+                        return;
+                    }
+                    else if(value === 'u'){
+                        casiBody.morphTargetManager.getTarget(13).influence = 1;
+                        casiInnerMouth.morphTargetManager.getTarget(13).influence = 1;
+                        primitive.morphTargetManager.getTarget(4).influence = 1;
+                        
+                        //reset Casi's lip positions
+                        /*casiBody.morphTargetManager.getTarget(13).influence = 0;
+                        casiInnerMouth.morphTargetManager.getTarget(13).influence = 0;
+                        primitive.morphTargetManager.getTarget(4).influence = 0;
+                        return;
+                    }
+                    else if(value === 'i'){
+                        casiBody.morphTargetManager.getTarget(15).influence = 1;
+                        casiInnerMouth.morphTargetManager.getTarget(15).influence = 1;
+                        primitive.morphTargetManager.getTarget(6).influence = 1;
+                        
+                        //reset Casi's lip positions
+                        /*casiBody.morphTargetManager.getTarget(15).influence = 0;
+                        casiInnerMouth.morphTargetManager.getTarget(15).influence = 0;
+                        primitive.morphTargetManager.getTarget(6).influence = 0;
+                        return;
+                    }
+                    else if(value === 'f'){
+                        casiBody.morphTargetManager.getTarget(16).influence = 1;
+                        casiInnerMouth.morphTargetManager.getTarget(16).influence = 1;
+                        casiTeeth.morphTargetManager.getTarget(1).influence = 1;
+                        primitive.morphTargetManager.getTarget(7).influence = 1;
+                        
+                        /*casiBody.morphTargetManager.getTarget(16).influence = 0;
+                        casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
+                        casiTeeth.morphTargetManager.getTarget(1).influence = 0;
+                        primitive.morphTargetManager.getTarget(7).influence = 0;
+                        return;
+                    }
+                    else if (value === 'v'){
+                        casiBody.morphTargetManager.getTarget(16).influence = 1;
+                        casiInnerMouth.morphTargetManager.getTarget(16).influence = 1;
+                        casiTeeth.morphTargetManager.getTarget(1).influence = 1;
+                        primitive.morphTargetManager.getTarget(7).influence = 1;
+                        
+                        /*casiBody.morphTargetManager.getTarget(16).influence = 0;
+                        casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
+                        casiTeeth.morphTargetManager.getTarget(1).influence = 0;
+                        primitive.morphTargetManager.getTarget(7).influence = 0;
+                        return;
+                    }*/
                     switch (value) {
                         case 'a': {
                             // Instead of changing position, you can all lip animations according to the vowel.
                             casiBody.morphTargetManager.getTarget(12).influence = 1;
                             casiInnerMouth.morphTargetManager.getTarget(12).influence = 1;
-
+                            primitive.morphTargetManager.getTarget(0).influce = 1;
+                            console.log(casiBody.morphTargetManager);
+                            
+                            //console.log(casiBody.morphTargetManager.getTarget(12).onInfluenceChange.currentTarget(12));
                             casiBody.morphTargetManager.getTarget(14).influence = 0;
                             casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
-                            casiTeeth.morphTargetManager.getTarget(0).influence = 0;
+                            //casiTeeth.morphTargetManager.getTarget(0).influence = 0;
                             break
                         }
                         case 'e': {
                             casiBody.morphTargetManager.getTarget(14).influence = 1;
                             casiInnerMouth.morphTargetManager.getTarget(14).influence = 1;
                             casiTeeth.morphTargetManager.getTarget(0).influence = 1;
+                            console.log(casiBody.morphTargetManager);
+                            //console.log(value);
 
+                            casiBody.morphTargetManager.getTarget(11).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
+                            break
+                        }
+                        case 'o': {
+                            casiBody.morphTargetManager.getTarget(11).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(11).influence = 1;
+                            //console.log(value);
+                            casiBody.morphTargetManager.getTarget(13).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(13).influence = 0;
+                            break
+                        }
+                        case 'u': {
+                            casiBody.morphTargetManager.getTarget(13).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(13).influence = 1;
+                            
+                            casiBody.morphTargetManager.getTarget(15).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(15).influence = 0;
+                            break
+                        }
+                        case 'i': {
+                            casiBody.morphTargetManager.getTarget(15).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(15).influence = 1;
+                            
+                            casiBody.morphTargetManager.getTarget(16).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
+                            break
+                        }
+                        case 'f': {
+                            casiBody.morphTargetManager.getTarget(16).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 1;
+                            casiTeeth.morphTargetManager.getTarget(1).influence = 1;
+                            primitive.morphTargetManager.getTarget(7).influence = 1;
+                            
                             casiBody.morphTargetManager.getTarget(12).influence = 0;
                             casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
-                            break
+                            casiTeeth.morphTargetManager.getTarget(1).influence = 0;
+                            primitive.morphTargetManager.getTarget(7).influence = 0;
+                            break;
+                        }
+                        case 'v': {
+                            casiBody.morphTargetManager.getTarget(16).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 1;
+                            casiTeeth.morphTargetManager.getTarget(1).influence = 1;
+                            primitive.morphTargetManager.getTarget(7).influence = 1;
+                            
+                            casiBody.morphTargetManager.getTarget(16).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
+                            casiTeeth.morphTargetManager.getTarget(1).influence = 0;
+                            primitive.morphTargetManager.getTarget(7).influence = 0;
+                            break;
                         }
                     }
                 });
 
                 let idx = 0;
-                const vowels = ['a', 'e'];
+                const vowels = ['a', 'e', 'o', 'u', 'i', 'f', 'v'];
                 // Change current vowel repeatedly
                 const inter = setInterval(() => {
                     setCurrentVowel(vowels[idx]);
-                    idx = (idx + 1) % 2;
+                    console.log(idx);
+                    console.log(vowels);
+                    idx = (idx + 1) % 7
                 }, 1000);
 
                 scene.onDisposeObservable.add(() => {
                     clearInterval(inter);
                 });
 
-                //scene.onBeforeRenderObservable.add(function(){
+                /*scene.onBeforeRenderObservable.add(function(){
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     //Note morphTarget #11 is shape key o, #12 is shape key a
                     //primitive.morphTargetManager.getTarget(4).influence = Math.abs(Math.sin(t));
@@ -362,7 +522,7 @@ var createScene = function() {
                     //casiTeeth.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     //casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.cos(t));
                     //t += 0.07;
-            //});
+            });*/
             
             //Used to lip Sync Casi with what she says
             /*function lipSync(){
@@ -414,6 +574,11 @@ var renderLoop = function(finalTimeStamp, finalViseme){
 //Why don't I use the runRenderLoop function to lip sync casi since It runs continuously
 //I can get casi's lips in the renderloop function
 engine.runRenderLoop(renderLoop);
+
+//Watch for browser/canvas resize events
+window.addEventListener("resize", function () {
+    engine.resize();
+});
 function update(progress, lipViseme){
     //Update the state of the world for the elapsed time since last render
     
@@ -486,10 +651,10 @@ function loop(timestamp, passJson, newViseme, newTime){
     timestamp.value = timeLapsed;
     passJson.value = againJson;
     newViseme.value = viseme;
-    console.log(passJson);
+    //console.log(passJson);
     //console.log(newViseme);
     //console.log(newTime);
-    console.log(timestamp);
+    //console.log(timestamp);
     /*const casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
     const casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
     const primitive = scene.getMeshByName("Primitives.001");
@@ -535,6 +700,7 @@ function loop(timestamp, passJson, newViseme, newTime){
     //var lipSync = new Animation(viseme, casiInnerMouth);
     //scene.beginDirectAnimation(CasiInnerMouth);
     //lipSync();
+    return newViseme;
     
 };
   /* engine.runRenderLoop(function () {
