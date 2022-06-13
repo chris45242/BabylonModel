@@ -310,10 +310,9 @@ var createScene = function() {
                 speakButton.addEventListener("click", function(){
                     console.log("click");
                     speakText();
+                    //setCurrentVowel();
                 });
                 //canvas.parentElement.appendChild(speakButton);
-                console.log(speakButton);
-                console.log(speakButton.position);
                 const lipSync = 'a';
                 const vowelInput = {
                     value: lipSync
@@ -430,8 +429,16 @@ var createScene = function() {
                             console.log(casiBody.morphTargetManager);
                             
                             //console.log(casiBody.morphTargetManager.getTarget(12).onInfluenceChange.currentTarget(12));
+                            casiBody.morphTargetManager.getTarget(11).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
+                            casiBody.morphTargetManager.getTarget(13).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(13).influence = 0;
                             casiBody.morphTargetManager.getTarget(14).influence = 0;
                             casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
+                            casiBody.morphTargetManager.getTarget(15).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(15).influence = 0;
+                            casiBody.morphTargetManager.getTarget(16).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
                             //casiTeeth.morphTargetManager.getTarget(0).influence = 0;
                             break
                         }
@@ -442,30 +449,64 @@ var createScene = function() {
                             console.log(casiBody.morphTargetManager);
                             //console.log(value);
 
+                            //set all other morph target influences to 0 so they won't interfere with the lip positions
                             casiBody.morphTargetManager.getTarget(11).influence = 0;
                             casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
+                            casiBody.morphTargetManager.getTarget(12).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
+                            casiBody.morphTargetManager.getTarget(13).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(13).influence = 0;
+                            casiBody.morphTargetManager.getTarget(15).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(15).influence = 0;
+                            casiBody.morphTargetManager.getTarget(16).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
                             break
                         }
                         case 'o': {
                             casiBody.morphTargetManager.getTarget(11).influence = 1;
                             casiInnerMouth.morphTargetManager.getTarget(11).influence = 1;
                             //console.log(value);
+                            
+                            casiBody.morphTargetManager.getTarget(12).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
                             casiBody.morphTargetManager.getTarget(13).influence = 0;
                             casiInnerMouth.morphTargetManager.getTarget(13).influence = 0;
+                            casiBody.morphTargetManager.getTarget(14).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
+                            casiBody.morphTargetManager.getTarget(15).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(15).influence = 0;
+                            casiBody.morphTargetManager.getTarget(16).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
                             break
                         }
                         case 'u': {
                             casiBody.morphTargetManager.getTarget(13).influence = 1;
                             casiInnerMouth.morphTargetManager.getTarget(13).influence = 1;
                             
+                            casiBody.morphTargetManager.getTarget(11).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
+                            casiBody.morphTargetManager.getTarget(12).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
+                            casiBody.morphTargetManager.getTarget(14).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
                             casiBody.morphTargetManager.getTarget(15).influence = 0;
                             casiInnerMouth.morphTargetManager.getTarget(15).influence = 0;
+                            casiBody.morphTargetManager.getTarget(16).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
                             break
                         }
                         case 'i': {
                             casiBody.morphTargetManager.getTarget(15).influence = 1;
                             casiInnerMouth.morphTargetManager.getTarget(15).influence = 1;
                             
+                            casiBody.morphTargetManager.getTarget(11).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
+                            casiBody.morphTargetManager.getTarget(12).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
+                            casiBody.morphTargetManager.getTarget(13).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(13).influence = 0;
+                            casiBody.morphTargetManager.getTarget(14).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
                             casiBody.morphTargetManager.getTarget(16).influence = 0;
                             casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
                             break
@@ -476,11 +517,19 @@ var createScene = function() {
                             casiTeeth.morphTargetManager.getTarget(1).influence = 1;
                             primitive.morphTargetManager.getTarget(7).influence = 1;
                             
+                            casiBody.morphTargetManager.getTarget(11).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
                             casiBody.morphTargetManager.getTarget(12).influence = 0;
                             casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
                             casiTeeth.morphTargetManager.getTarget(1).influence = 0;
                             primitive.morphTargetManager.getTarget(7).influence = 0;
-                            break;
+                            casiBody.morphTargetManager.getTarget(13).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(13).influence = 0;
+                            casiBody.morphTargetManager.getTarget(14).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
+                            casiBody.morphTargetManager.getTarget(15).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(15).influence = 0;
+                            break
                         }
                         case 'v': {
                             casiBody.morphTargetManager.getTarget(16).influence = 1;
@@ -488,11 +537,21 @@ var createScene = function() {
                             casiTeeth.morphTargetManager.getTarget(1).influence = 1;
                             primitive.morphTargetManager.getTarget(7).influence = 1;
                             
+                            casiBody.morphTargetManager.getTarget(11).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
+                            casiBody.morphTargetManager.getTarget(12).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
+                            casiBody.morphTargetManager.getTarget(13).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(13).influence = 0;
+                            casiBody.morphTargetManager.getTarget(14).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
+                            casiBody.morphTargetManager.getTarget(15).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(15).influence = 0;
                             casiBody.morphTargetManager.getTarget(16).influence = 0;
                             casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
                             casiTeeth.morphTargetManager.getTarget(1).influence = 0;
                             primitive.morphTargetManager.getTarget(7).influence = 0;
-                            break;
+                            break
                         }
                     }
                 });
@@ -502,9 +561,13 @@ var createScene = function() {
                 // Change current vowel repeatedly
                 const inter = setInterval(() => {
                     setCurrentVowel(vowels[idx]);
+                    console.log(vowelInput);
                     console.log(idx);
                     console.log(vowels);
-                    idx = (idx + 1) % 7
+                    idx = (idx + 1) % 7 //for the idx = (idx + 1) % 7}, 1000 
+                    //the 1000 controls how fast the vowels are changed 
+                    //if 100 the vowels will change faster but if at 1000000
+                    //the vowels will change slower
                 }, 1000);
 
                 scene.onDisposeObservable.add(() => {
@@ -652,7 +715,7 @@ function loop(timestamp, passJson, newViseme, newTime){
     passJson.value = againJson;
     newViseme.value = viseme;
     //console.log(passJson);
-    //console.log(newViseme);
+    console.log(newViseme);
     //console.log(newTime);
     //console.log(timestamp);
     /*const casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
