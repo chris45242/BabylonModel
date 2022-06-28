@@ -112,7 +112,9 @@
         var $ = function(id){ return document.getElementById(id);};
         var viseme, time, startTime, endTime;
         var passJSON, againJson, timeLapsed, jsonParsed;
-        var data = {};
+        var data = {
+            thisViseme: ""
+        };
         
         // Function invoked by button click
         function speakText() {
@@ -330,11 +332,13 @@ var createScene = function() {
                         for(var i = 0; i < jsonParsed.length; i++){
                             viseme = jsonParsed[i]['value'];
                             time = jsonParsed[i]['time'];
+                            //startTime = jsonParsed[i]['start'];
+                            //endTime = jsonParsed[i]['end'];
                             console.log(viseme);
                             console.log(time);
                             //lipSync = viseme;
-                        }
-                    }, 1000);
+                        //}
+                    //}, 1000);
                     //var delay = 0;
                     /*viseme.forEach(function(vise){
                         setTimeout(function(){
@@ -347,10 +351,13 @@ var createScene = function() {
                             
                     //})}
                     //setCurrentVowel();
-                });
+                //});
                 //canvas.parentElement.appendChild(speakButton);
-                const lipSync = 'a';
+                const lipSync = viseme;
                 console.log(lipSync);
+                    }
+                }, 1000);
+                });
                 const vowelInput = {
                     value: lipSync
                 };
