@@ -112,6 +112,7 @@
         var $ = function(id){ return document.getElementById(id);};
         var viseme, time, startTime, endTime;
         var passJSON, againJson, timeLapsed, jsonParsed;
+        var visemeArray = [];
         var data = {
             thisViseme: ""
         };
@@ -164,15 +165,12 @@
                     console.log(jsonParsed.length);
                     for(var i = 0; i < jsonParsed.length; i++){
                         viseme = jsonParsed[i]['value'];
-                        //if(viseme.includes('e')){console.log("got it");}
-                        //if(viseme.includes('a')){console.log("Gimme an a");}
-                        //if(viseme.includes('i')){console.log("Here's an e");}
-                        //if(viseme.includes('u')){console.log("Found a u");}
-                        //if(viseme.includes('o')){console.log("I see an o");}
                         time = jsonParsed[i]['time'];
                         startTime = jsonParsed[i]['start'];
                         endTime = jsonParsed[i]['end'];
                         timeLapsed = endTime - startTime;
+                        visemeArray.push(viseme);
+                        //console.log(visemeArray);
                         //console.log(viseme);
                         //console.log(time);
                         //console.log(startTime);
@@ -181,12 +179,12 @@
                         
                         //calls function loop and passes in timeLapsed, againJson, viseme,
                         //and time as parameters.
-                        loop(timeLapsed, againJson, viseme, time);
+                        //loop(timeLapsed, againJson, viseme, time);
                         //if viseme equals a or k then use morphtargetmanager to change mouth to a
                         //if viseme equals e then use morphtargetmanager to change mouth to e
                         //if viseme equals sil then use morphtargetmanager to change mouth to basis
                         //if viseme equals u or r then use morphtargetmanager to change mouth to o
-                        return viseme;
+                        //return viseme;
                     }
                     
                 }).catch(error => {throw error});
@@ -265,7 +263,7 @@ var createScene = function() {
     var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, scene);
     ground.receiveShadows = true;
         
-        var scales = [];
+        
 	var url;
 	var fileName;
         
@@ -324,21 +322,29 @@ var createScene = function() {
                     console.log(viseme);
                     console.log(againJson);
                     console.log(jsonParsed);
+                    console.log(visemeArray);
+                    //visemeArray.forEach(inter);
                     //Gets every viseme from calling the speakText into the createScene function
                     //using a setTimeout function so that I give time for the speakText function to
                     //finish and that the viseme and time variables values won't be undefined
                     setTimeout(() => {
-                        console.log(jsonParsed);
-                        for(var i = 0; i < jsonParsed.length; i++){
+                        //console.log(jsonParsed);
+                        /*for(var i = 0; i < jsonParsed.length; i++){
                             viseme = jsonParsed[i]['value'];
                             time = jsonParsed[i]['time'];
+                            //visemeArray.push(viseme);
+                            //setInterval(viseme, time);
                             //startTime = jsonParsed[i]['start'];
                             //endTime = jsonParsed[i]['end'];
                             console.log(viseme);
                             console.log(time);
+                            //visemeArray.forEach(function(viseme){});
                             //lipSync = viseme;
-                        //}
-                    //}, 1000);
+                        }*/
+                        //console.log(visemeArray);
+                        //Array.from(visemeArray).forEach(inter);
+                        //visemeArray.forEach(inter);
+                    }, 1000);
                     //var delay = 0;
                     /*viseme.forEach(function(vise){
                         setTimeout(function(){
@@ -351,13 +357,13 @@ var createScene = function() {
                             
                     //})}
                     //setCurrentVowel();
-                //});
-                //canvas.parentElement.appendChild(speakButton);
-                const lipSync = viseme;
-                console.log(lipSync);
-                    }
-                }, 1000);
                 });
+                //canvas.parentElement.appendChild(speakButton);
+                const lipSync = 'a';
+                console.log(lipSync);
+                    //}
+                //}, 1000);
+                //});
                 const vowelInput = {
                     value: lipSync
                 };
@@ -560,6 +566,7 @@ var createScene = function() {
                 const vowels = ['a', 'e', 'o', 'u', 'i', 'f', 'v'];
                 // Change current vowel repeatedly
                 const inter = setInterval(() => {
+                    console.log(visemeArray);
                     setCurrentVowel(vowels[idx]);
                     console.log(vowelInput);
                     console.log(idx);
