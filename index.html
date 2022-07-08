@@ -100,7 +100,7 @@
    
     <div id="textToSynth">
       <input autofocus size="23" type="text" id="textEntry" value="It's very good to meet you."/>
-      <button id="speaker" class="btn default" onClick="soundText();">Synthesize</button>
+      <button id="speaker" class="btn default" onClick="soundText()">Synthesize</button>
       <p id="result">Enter text above then click Synthesize</p>
     </div>
     <audio id="audioPlayback" autoplay>
@@ -113,9 +113,6 @@
         var viseme, time, startTime, endTime;
         var passJSON, againJson, timeLapsed, jsonParsed;
         var visemeArray = [];
-        var data = {
-            thisViseme: ""
-        };
         
         // Function invoked by button click
         function speakText() {
@@ -262,8 +259,7 @@ var createScene = function() {
 		light.intensity = 0.7;
     var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, scene);
     ground.receiveShadows = true;
-        
-        
+               
 	var url;
 	var fileName;
         
@@ -300,25 +296,10 @@ var createScene = function() {
                 
                 //Set up Morph Targets for Casi before the screen is done loading.
                 //let t = 0;
-                //var getTimeStamp, getViseme, getJSON, getTime;
-                //loop(getTimeStamp, getViseme, getJSON, getTime);
-                //console.log(getTime);
-                //perhaps I could move the button that calls the speakText funciton 
-                //into the createScene function 
                 var speakButton = document.getElementById("speaker");
-                //speakButton.textContent = "Speak";
-                //speakButton.style.position = "absolute";
-                //speakButton.style.zIndex = 1000;
-                //speakButton.style.xIndex = 100;
-                //console.log(viseme);
                 speakButton.addEventListener("click", function(){
                     console.log("click");
                     speakText();
-                    //Perhaps I could just the get the values I need from the 
-                    //global variables at the top of the program since their
-                    //supposed to be set to the visemes, json data, and time
-                    //that I want to use to lip sync Casi and perhaps using something like delay
-                    //in jquery will help me get the output I want instead of getting undefined
                     console.log(viseme);
                     console.log(againJson);
                     console.log(jsonParsed);
@@ -327,7 +308,7 @@ var createScene = function() {
                     //Gets every viseme from calling the speakText into the createScene function
                     //using a setTimeout function so that I give time for the speakText function to
                     //finish and that the viseme and time variables values won't be undefined
-                    setTimeout(() => {
+                    //setTimeout(() => {
                         //console.log(jsonParsed);
                         /*for(var i = 0; i < jsonParsed.length; i++){
                             viseme = jsonParsed[i]['value'];
@@ -344,7 +325,7 @@ var createScene = function() {
                         //console.log(visemeArray);
                         //Array.from(visemeArray).forEach(inter);
                         //visemeArray.forEach(inter);
-                    }, 1000);
+                    //}, 1000);
                     //var delay = 0;
                     /*viseme.forEach(function(vise){
                         setTimeout(function(){
@@ -357,7 +338,7 @@ var createScene = function() {
                             
                     //})}
                     //setCurrentVowel();
-                });
+                //});
                 //canvas.parentElement.appendChild(speakButton);
                 const lipSync = 'a';
                 console.log(lipSync);
@@ -368,19 +349,19 @@ var createScene = function() {
                     value: lipSync
                 };
                 console.log(vowelInput.value);
-                //console.log(lipPositionProperties);
                 console.log(lipSync);
-                //console.log(viseme);
+                
                 // Create custom observable for the 'vowelInput' 
                 vowelInput.onValueChange = new BABYLON.Observable();
 
                 // Create function to set current vowel
-                const setCurrentVowel = (value) => {
+                const setCurrentVowel = (value, otherValue) => {
                     if (value === vowelInput.value) {
                         console.log(value);
                         return value;
                     } else {
                         vowelInput.value = value;
+                        console.log(otherValue);
                         console.log("test");
                         console.log(value);
                         vowelInput.onValueChange.notifyObservers(vowelInput.value);
@@ -397,7 +378,6 @@ var createScene = function() {
                             casiInnerMouth.morphTargetManager.getTarget(12).influence = 1;
                             primitive.morphTargetManager.getTarget(3).influce = 1;
                             
-                            //console.log(casiBody.morphTargetManager.getTarget(12).onInfluenceChange.currentTarget(12));
                             casiBody.morphTargetManager.getTarget(11).influence = 0;
                             casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
                             casiBody.morphTargetManager.getTarget(13).influence = 0;
@@ -563,24 +543,34 @@ var createScene = function() {
                 });
 
                 let idx = 0;
+                let index = 0;
                 const vowels = ['a', 'e', 'o', 'u', 'i', 'f', 'v'];
                 // Change current vowel repeatedly
+                setTimeout(() => {
                 const inter = setInterval(() => {
                     console.log(visemeArray);
-                    setCurrentVowel(vowels[idx]);
+                    //set vowel index equal to the viseme we are at right now
+                    //for example if the currentViseme equals i then we would get the array element in
+                    //vowels that is i and if the current viseme equals e then we would get the array
+                    //element in vowels that's e 
+                    setCurrentVowel(vowels[idx], visemeArray[index]);
                     console.log(vowelInput);
                     console.log(idx);
                     console.log(vowels);
+                    index = (index + 1) % visemeArray.length;
+                    console.log(index);
                     idx = (idx + 1) % 7 //for the idx = (idx + 1) % 7}, 1000 
                     //the 1000 controls how fast the vowels are changed 
                     //if 100 the vowels will change faster but if at 1000000
                     //the vowels will change slower
+                    console.log(idx);
                 }, 1000);
+            }, 1000);
 
                 scene.onDisposeObservable.add(() => {
                     clearInterval(inter);
                 });
-
+            });
                 /*scene.onBeforeRenderObservable.add(function(){
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
                     //Note morphTarget #11 is shape key o, #12 is shape key a
@@ -612,7 +602,7 @@ var createScene = function() {
 var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
 
 var scene = createScene();
-var renderLoop = function(finalTimeStamp, finalViseme){
+var renderLoop = function(){
     scene.render();
     //I can get the meshes that are Casi's lips and the primitive here and use them 
     //for lip syncing here as well
@@ -641,14 +631,13 @@ var renderLoop = function(finalTimeStamp, finalViseme){
     
 };
 
-//Why don't I use the runRenderLoop function to lip sync casi since It runs continuously
-//I can get casi's lips in the renderloop function
 engine.runRenderLoop(renderLoop);
 
 //Watch for browser/canvas resize events
 window.addEventListener("resize", function () {
     engine.resize();
 });
+
 function update(progress, lipViseme){
     //Update the state of the world for the elapsed time since last render
     
@@ -659,47 +648,7 @@ function update(progress, lipViseme){
     //an animation I have to know which animation in the scene to play so I need to 
     //manage a relationship between the mesh and the associateed animation I want to associate it with
     //var anim = BABYLON.MorphTarget.FromMesh(casiBody, "Casi's Body.001_primitive0", 0.2);
-    var keys = [];
-    
-    
-    
-    //Create a function to set the current viseme
-    /*function setCurrentVowel(value){
-        console.log(value);
-        if(value === vowelInput.value){
-            console.log(value);
-            return value;
-       } else{
-           vowelInput.value = value;
-           vowelInput.onValueChange.notifyObservers(vowelInput.value);
-       }
-    };*/
-    //Create a function to set the current viseme
-    /*const setCurrentVowel = (value) => {
-        console.log(setCurrentVowel);
-        if(value === vowelInput.value){
-            console.log(value);
-            return value;
-        }
-        else{
-            vowelInput.value = value;
-            vowelInput.onValueChange.notifyObservers(vowelInput.value);
-        }
-    };*/
-    
-    
-    /*let idx = 0;
-    const vowels = ['a', 'e'];
-    // Change current vowel repeatedly
-    setInterval(() => {
-        setCurrentVowel(vowels[idx]);
-        idx = (idx + 1) % 2;
-    }, 1000);*/
-    //casiInnerMouth.morphTargetManager.getTarget(14).influence = progress; 
-    //casiBody.morphTargetManager.getTarget(14).influence = progress;
-    //console.log(casiBody);
-    //var casiInnerMouth.morphTargetManager.getTarget(12).influence = progress;
-    //draw();
+   
     
 };
 
@@ -707,13 +656,6 @@ function update(progress, lipViseme){
 //Might not need function draw because I think the state of the world means the default scene
 function draw(){
     //Draw the state of the world
-    /*var casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
-    var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
-    var primitive = scene.getMeshByName("Primitives.001");
-    var casiTeeth = scene.getMeshByName("Casi's Teeth");
-    casiInnerMouth.morphTargetManager.getTarget(14).influence = 1; 
-    casiBody.morphTargetManager.getTarget(14).influence = 1;*/
-    //console.log(casiInnerMouth);
     
 };
 
