@@ -134,10 +134,16 @@
                 // Create function to set current vowel
                 const setCurrentVowel = (value) => {
                     if (value === vowelInput.value) {
+						//console.log(value);
                         return value
                     } else {
                         vowelInput.value = value
                         console.log("test")
+						if(t + 1 === obj.length){
+							clearInterval(inter);
+							console.log("inter cleared");
+							//break;
+						}
 						//window.alert(value);
                         vowelInput.onValueChange.notifyObservers(vowelInput.value)
                     }
@@ -145,6 +151,7 @@
 
                 // Add callback function to the custom observable 
                 vowelInput.onValueChange.add((value) => {
+					//console.log("begin switch");
 					//window.alert(value);
                     switch (value) {
                         case 'a': 
@@ -297,9 +304,20 @@
                 const vowels = ['a', 'e', 'o', 'u', 'i', 'f'];
 				//setTimeout(() => {
                 var intervalID = scene.onBeforeRenderObservable.add(function(){
-					setTimeout(() => {
-						//while(t !== obj.length){
+					setTimeout(() => {//setTimeout is to postpone the setInterval function so that I can see what lip positions we start out with and figure out if its the correct lip position
+						//while(t + 1 !== obj.length){
+							console.log("begin setInterval");
 							setInterval(inter, obj[t]['time']);
+							console.log("stop setInterval");
+							if(t + 1 === obj.length){
+								engine.stopRenderLoop();//stops changing the lip positions once we reach the end of the array 
+							}
+							/*if(t + 1 === obj.length){
+								console.log("clear interval");
+								clearInterval(inter);
+								console.log("interval cleared");
+								return;
+							}*/
 						//}
 						//scene.onAfterRenderObservable.remove(intervalID);//stop the setInterval function once we've reached the end of the obj array.
 					}, 10000);
@@ -317,15 +335,22 @@
                     idx = (idx + 1) % 6;
                     t = (t + 1) % obj.length;
 					//I've proved that the remove does show up when the if condition is true but the lip positions still continue to change (in other words the setInterval functions doesn't stop)
-					if(t + 1 === obj.length){
+					/*if(t + 1 === obj.length){
 						console.log("remove");
-						scene.onAfterRenderObservable.remove(intervalID);
-					}
+						clearInterval(inter);
+						console.log("inter removed");
+						clearInterval(intervalID);
+						console.log("intervalID removed");
+						return;
+						//clearInterval(intervalID);
+						//scene.onAfterRenderObservable.remove(intervalID);
+					}*/
                     //console.log(obj[t]['time']);
                 //}, 1000)
                 }
 
                 scene.onDisposeObservable.add(() => {
+					console.log("inside ondisposeobservable");
                     clearInterval(inter)
                 })
 
@@ -358,6 +383,12 @@
                     window.engine = await asyncEngineCreation();
         if (!engine) throw 'engine should not be null.';
         startRenderLoop(engine, canvas);
+		/*var renderLoop = function(){
+		console.log("not paused");
+			if(!scene.paused){
+				scene.render();
+			}
+		};*/
         window.scene = createScene();};
         initFunction().then(() => {sceneToRender = scene                    
         });
@@ -366,6 +397,7 @@
         window.addEventListener("resize", function () {
             engine.resize();
         });
+		
     </script>
 </body>
 </html>
