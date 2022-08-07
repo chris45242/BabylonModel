@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Babylon.js sample code</title>
+
+        <!-- Babylon.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+        <script src="https://assets.babylonjs.com/generated/Assets.js"></script>
+        <script src="https://preview.babylonjs.com/ammo.js"></script>
+        <script src="https://preview.babylonjs.com/cannon.js"></script>
+        <script src="https://preview.babylonjs.com/Oimo.js"></script>
+        <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+        <script src="https://preview.babylonjs.com/babylon.js"></script>
+        <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+        <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+        <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+        <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+        <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+		
+		<!-- Text to speech Dependency -->
+        <script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.983.0.min.js"></script>
+		
+		<script type="text/javascript" src="config.js"></script>
+
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+			
+        </style>
+    </head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+	<div id="textToSynth">
+      <input autofocus size="23" type="text" id="textEntry" value="It's very good to meet you."/>
+      <button id="speaker" class="btn default" >Synthesize</button>
+      <p id="result">Enter text above then click Synthesize</p>
+    </div>
+	<audio id="audioPlayback" autoplay>
+      <source id="audioSource" type="audio/mp3" src="">
+    </audio>
+    <script>
+
+        var canvas = document.getElementById("renderCanvas");
+		//const { JSDOM } = require("jsdom");
+		//const { window } = new JSDOM();
+
+        var startRenderLoop = function (engine, canvas) {
+            engine.runRenderLoop(function () {
+                if (sceneToRender && sceneToRender.activeCamera) {
+                    sceneToRender.render();
+                }
+            });
+        }
+
+        var engine = null;
+        var scene = null;
+        var sceneToRender = null;
+        var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
+        var createScene = function () {
+    // This creates a basic Babylon Scene object (non-mesh)
+    var scene = new BABYLON.Scene(engine);
+
+    // This creates and positions a free camera (non-mesh)
+    var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+
+    // This targets the camera to scene origin
+    //camera.setTarget(BABYLON.Vector3.Zero());
+
+    // This attaches the camera to the canvas
+    //camera.attachControl(canvas, true);
+
+    // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+
+    // Default intensity is 1. Let's dim the light a small amount
+    light.intensity = 0.7;
+
+    url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
+    fileName = "project.blend1.gltf";
+
+    const Casi = BABYLON.SceneLoader.Append(url, fileName, scene, function (s){
+                // Create a default arc rotate camera and light.
+				function soundText(){
+					var speechParams = {
+						OutputFormat: "mp3",
+						//OutputS3BucketName: "casi-bucket",
+						SampleRate: "16000",
+						Text: "",
+						TextType: "text",
+						VoiceId: "Joanna"
+						
+					};
+					speechParams.Text = document.getElementById("textEntry").value.toLowerCase(); 
+
+					// Create the Polly service object and presigner object
+					var polly = new AWS.Polly({apiVersion: '2016-06-10'});
+					var signer = new AWS.Polly.Presigner(speechParams, polly);
+
+					// Create presigned URL of synthesized speech file
+					signer.getSynthesizeSpeechUrl(speechParams, function(error, url) {
+					if (error) {
+						document.getElementById('result').innerHTML = error;
+					} else {
+						document.getElementById('audioSource').src = url;
+						document.getElementById('audioPlayback').load();
+						document.getElementById('result').innerHTML = "Speech ready to play.";
+						document.getElementById('playButton');
+					}
+				});
+            };
+                scene.createDefaultCameraOrLight(true, true, true);
+                scene.activeCamera.alpha += Math.PI;
+                
+                scene.stopAllAnimations();
+
+		        //scene.animationGroups[0].start(true); 
+                //scene.animationGroups[1].start(true);
+
+                var casiVisor = scene.getMeshByName("Casi's Visor");
+                casiVisor.setEnabled(true);
+                casiVisor.visibility = 0.7;
+
+                var casiBody = scene.getMeshByName("Casi's Body.001_primitive0");
+                var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
+                var casiTeeth = scene.getMeshByName("Casi's Teeth");
+				var primitive = scene.getMeshByName("Primitives.001");
+                var jsonParsed = '[{"time":6,"type":"word","start":0,"end":4,"value":"it\'s"},'+
+                '{"time":6,"type":"viseme","value":"i"},' +
+                '{"time":64,"type":"viseme","value":"t"},' +
+                '{"time":122,"type":"viseme","value":"s"},' +
+                '{"time":190,"type":"word","start":5,"end":9,"value":"very"},' +
+                '{"time":190,"type":"viseme","value":"f"},' +
+                '{"time":241,"type":"viseme","value":"E"},' +
+                '{"time":282,"type":"viseme","value":"r"},' +
+                '{"time":376,"type":"viseme","value":"i"},' +
+                '{"time":416,"type":"word","start":10,"end":14,"value":"good"},' +
+                '{"time":416,"type":"viseme","value":"k"},' +
+                '{"time":481,"type":"viseme","value":"u"},' +
+                '{"time":576,"type":"viseme","value":"t"},' +
+                '{"time":627,"type":"word","start":15,"end":17,"value":"to"},' +
+                '{"time":627,"type":"viseme","value":"t"},' +
+                '{"time":674,"type":"viseme","value":"u"},' +
+                '{"time":716,"type":"word","start":18,"end":22,"value":"meet"},' +
+                '{"time":716,"type":"viseme","value":"p"},' +
+                '{"time":801,"type":"viseme","value":"i"},' +
+                '{"time":923,"type":"viseme","value":"t"},' +
+                '{"time":999,"type":"word","start":23,"end":26,"value":"you"},' +
+                '{"time":999,"type":"viseme","value":"i"},' +
+                '{"time":1135,"type":"viseme","value":"u"},' +
+                '{"time":1357,"type":"viseme","value":"sil"}]';
+
+                const obj = JSON.parse(jsonParsed);
+                let t = 0;
+                
+                const lipSync = obj[t]['value'];
+				//const lipSync = 'a';
+                const vowelInput = {
+                    value: lipSync,
+                }
+				
+                // Create custom observable for the 'vowelInput' 
+                vowelInput.onValueChange = new BABYLON.Observable();
+
+                // Create function to set current vowel
+                const setCurrentVowel = (value) => {
+                    if (value === vowelInput.value) {
+                        return value
+                    } else {
+                        vowelInput.value = value;
+                        //console.log("test");
+                        vowelInput.onValueChange.notifyObservers(vowelInput.value);
+                    }
+                }
+
+                // Add callback function to the custom observable 
+                vowelInput.onValueChange.add((value) => {
+                    switch (value) {
+                        case 'a': 
+						case '@': {
+                            // Instead of changing position, you can all lip animations according to the vowel.
+                            casiBody.morphTargetManager.getTarget(12).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = 1;
+							primitive.morphTargetManager.getTarget(3).influence = 1;
+
+							casiBody.morphTargetManager.getTarget(11).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
+                            casiBody.morphTargetManager.getTarget(13).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(13).influence = 0;
+                            casiBody.morphTargetManager.getTarget(14).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
+                            casiTeeth.morphTargetManager.getTarget(0).influence = 0;
+							casiBody.morphTargetManager.getTarget(15).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(15).influence = 0;
+                            casiBody.morphTargetManager.getTarget(16).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
+                            casiTeeth.morphTargetManager.getTarget(0).influence = 0;
+							casiTeeth.morphTargetManager.getTarget(1).influence = 0;
+                            primitive.morphTargetManager.getTarget(2).influence = 0;
+                            primitive.morphTargetManager.getTarget(4).influence = 0;
+                            primitive.morphTargetManager.getTarget(5).influence = 0;
+                            primitive.morphTargetManager.getTarget(6).influence = 0;
+                            primitive.morphTargetManager.getTarget(7).influence = 0;
+                            break
+                        }
+                        case 'e': 
+						case 'E': {
+                            casiBody.morphTargetManager.getTarget(14).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(14).influence = 1;
+                            casiTeeth.morphTargetManager.getTarget(0).influence = 1;
+							primitive.morphTargetManager.getTarget(5).influence = 1;
+
+							casiBody.morphTargetManager.getTarget(11).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
+                            casiBody.morphTargetManager.getTarget(12).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
+							casiBody.morphTargetManager.getTarget(13).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(13).influence = 0;
+							casiBody.morphTargetManager.getTarget(15).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(15).influence = 0;
+                            casiBody.morphTargetManager.getTarget(16).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
+                            casiTeeth.morphTargetManager.getTarget(1).influence = 0;
+                            primitive.morphTargetManager.getTarget(2).influence = 0;
+							primitive.morphTargetManager.getTarget(3).influence = 1;
+                            primitive.morphTargetManager.getTarget(4).influence = 0;
+                            primitive.morphTargetManager.getTarget(6).influence = 0;
+                            primitive.morphTargetManager.getTarget(7).influence = 0;
+                            break
+                        }
+						case 'o': 
+                        case 'r': {
+                            casiBody.morphTargetManager.getTarget(11).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(11).influence = 1;
+                            primitive.morphTargetManager.getTarget(2).influence = 1;
+                            
+                            casiBody.morphTargetManager.getTarget(12).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
+                            casiBody.morphTargetManager.getTarget(13).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(13).influence = 0;
+                            casiBody.morphTargetManager.getTarget(14).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
+                            casiBody.morphTargetManager.getTarget(15).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(15).influence = 0;
+                            casiBody.morphTargetManager.getTarget(16).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
+                            casiTeeth.morphTargetManager.getTarget(0).influence = 0;
+							casiTeeth.morphTargetManager.getTarget(1).influence = 0;
+                            primitive.morphTargetManager.getTarget(3).influence = 0;
+                            primitive.morphTargetManager.getTarget(4).influence = 0;
+                            primitive.morphTargetManager.getTarget(5).influence = 0;
+                            primitive.morphTargetManager.getTarget(6).influence = 0;
+                            primitive.morphTargetManager.getTarget(7).influence = 0;
+                            break
+                        }
+                        case 'u': {
+                            casiBody.morphTargetManager.getTarget(13).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(13).influence = 1;
+                            primitive.morphTargetManager.getTarget(4).influence = 1;
+                            
+                            casiBody.morphTargetManager.getTarget(11).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
+                            casiBody.morphTargetManager.getTarget(12).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
+                            casiBody.morphTargetManager.getTarget(14).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
+                            casiBody.morphTargetManager.getTarget(15).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(15).influence = 0;
+                            casiBody.morphTargetManager.getTarget(16).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
+                            casiTeeth.morphTargetManager.getTarget(0).influence = 0;
+							casiTeeth.morphTargetManager.getTarget(1).influence = 0;
+                            primitive.morphTargetManager.getTarget(2).influence = 0;
+                            primitive.morphTargetManager.getTarget(3).influence = 0;
+                            primitive.morphTargetManager.getTarget(5).influence = 0;
+                            primitive.morphTargetManager.getTarget(6).influence = 0;
+                            primitive.morphTargetManager.getTarget(7).influence = 0;
+                            break
+                        }
+                        case 'i': {
+                            casiBody.morphTargetManager.getTarget(15).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(15).influence = 1;
+                            primitive.morphTargetManager.getTarget(6).influence = 1;
+                            
+                            casiBody.morphTargetManager.getTarget(11).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
+                            casiBody.morphTargetManager.getTarget(12).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
+                            casiBody.morphTargetManager.getTarget(13).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(13).influence = 0;
+                            casiBody.morphTargetManager.getTarget(14).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
+                            casiBody.morphTargetManager.getTarget(16).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 0;
+                            casiTeeth.morphTargetManager.getTarget(0).influence = 0;
+							casiTeeth.morphTargetManager.getTarget(1).influence = 0;
+                            primitive.morphTargetManager.getTarget(2).influence = 0;
+                            primitive.morphTargetManager.getTarget(3).influence = 0;
+                            primitive.morphTargetManager.getTarget(4).influence = 0;
+                            primitive.morphTargetManager.getTarget(5).influence = 0;
+                            primitive.morphTargetManager.getTarget(7).influence = 0;
+                            break
+                        }
+                        case 'f':
+                        case 'v': {
+                            casiBody.morphTargetManager.getTarget(16).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(16).influence = 1;
+                            casiTeeth.morphTargetManager.getTarget(1).influence = 1;
+                            primitive.morphTargetManager.getTarget(7).influence = 1;
+                            
+                            casiBody.morphTargetManager.getTarget(11).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(11).influence = 0;
+                            casiBody.morphTargetManager.getTarget(12).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(12).influence = 0;
+                            casiTeeth.morphTargetManager.getTarget(1).influence = 0;
+                            casiBody.morphTargetManager.getTarget(13).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(13).influence = 0;
+                            casiBody.morphTargetManager.getTarget(14).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(14).influence = 0;
+                            casiBody.morphTargetManager.getTarget(15).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(15).influence = 0;
+							casiTeeth.morphTargetManager.getTarget(0).influence = 0;
+                            primitive.morphTargetManager.getTarget(2).influence = 0;
+                            primitive.morphTargetManager.getTarget(3).influence = 0;
+                            primitive.morphTargetManager.getTarget(4).influence = 0;
+                            primitive.morphTargetManager.getTarget(5).influence = 0;
+                            primitive.morphTargetManager.getTarget(6).influence = 0;
+                            break
+                        }
+                    }
+                })
+
+                let idx = 0
+                const vowels = ['a', 'e', 'o', 'u', 'i', 'f'];
+				setTimeout(soundText, 9000);
+                var intervalID = scene.onBeforeRenderObservable.add(function(){
+					setTimeout(() => {//setTimeout is to postpone the setInterval function so that I can see what lip positions we start out with and figure out if its the correct lip position
+						//soundText();
+						setInterval(inter, obj[t]['time']);
+						//soundText();
+						//setTimeout(inter, obj[t]['time']);
+						console.log(obj[t]['time']);
+						//var startTime = new Date().getTime();
+						//var startTime = performance.now() - 10000;//try subtracting 10000 since I'm using setTimeOut to see if the lip positions change according to the jsonParsed and since the setTimeOut is set to 10000 subtract that from startTime to see if the milliseconds are accurate
+						//console.log(startTime);
+						//if(startTime === obj[t]['time']){
+							//console.log(startTime);
+						//}
+						if(t + 1 === obj.length){
+							//scene.onBeforeRenderObservable.remove(intervalID);
+							engine.stopRenderLoop();//stops changing the lip positions once we reach the end of the array 
+						}
+							/*if(t + 1 === obj.length){
+								console.log("clear interval");
+								clearInterval(inter);
+								console.log("interval cleared");
+								return;
+							}*/
+						//scene.onAfterRenderObservable.remove(intervalID);//stop the setInterval function once we've reached the end of the obj array.
+					}, 10000);
+                });
+                // Change current vowel repeatedly
+                //const inter = setInterval(() => {
+                function inter(){
+					vowels[idx] = obj[t]['value'];
+                    setCurrentVowel(vowels[idx]);
+                    idx = (idx + 1) % 6;
+					var previousTime = obj[t]['time'];
+                    t = (t + 1) % obj.length;
+					var currentTime = obj[t]['time'];
+					//I've proved that the remove does show up when the if condition is true but the lip positions still continue to change (in other words the setInterval functions doesn't stop)
+					/*if(t + 1 === obj.length){
+						console.log("remove");
+						clearInterval(inter);
+						console.log("inter removed");
+						clearInterval(intervalID);
+						console.log("intervalID removed");
+						return;
+						//clearInterval(intervalID);
+						//scene.onAfterRenderObservable.remove(intervalID);
+					}*/
+                    //console.log(obj[t]['time']);
+                //}, 1000)
+                }
+
+                scene.onDisposeObservable.add(() => {
+                    clearInterval(inter)
+                })
+
+    });
+    
+
+    // Our built-in 'sphere' shape.
+    //var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 2, segments: 32}, scene);
+
+    // Move the sphere upward 1/2 its height
+    //sphere.position.y = 1;
+
+    // Our built-in 'ground' shape.
+    var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 6, height: 6}, scene);
+
+    return scene;
+};
+                window.initFunction = async function() {
+                    
+                    
+                    var asyncEngineCreation = async function() {
+                        try {
+                        return createDefaultEngine();
+                        } catch(e) {
+                        console.log("the available createEngine function failed. Creating the default engine instead");
+                        return createDefaultEngine();
+                        }
+                    }
+
+                    window.engine = await asyncEngineCreation();
+        if (!engine) throw 'engine should not be null.';
+        startRenderLoop(engine, canvas);
+		/*var renderLoop = function(){
+		console.log("not paused");
+			if(!scene.paused){
+				scene.render();
+			}
+		};*/
+        window.scene = createScene();};
+        initFunction().then(() => {sceneToRender = scene                    
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+		
+    </script>
+</body>
+</html>
