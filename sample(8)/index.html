@@ -162,12 +162,19 @@ var createScene = function () {
                 var frameRate = 30;
                 var morph = new BABYLON.Animation('morph', 'influence', frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
                 const keyFrames = [];
+				//For each time value in the jsonParsed array make a keyframe at the position indicated for the time
                 for(var t = 0; t < obj.length; t++){
                     var currentFrame = obj[t]['time'];
+					//sets the lip position (morph targets) value to 1
                     keyFrames.push({
                         frame: currentFrame,
                         value: 1,
                     });
+					//2 seconds later the lip position will be reset back to 0
+					keyFrames.push({
+						frameL currentFrame + 2,
+						value: 0,
+					})
                     console.log(keyFrames.frame);
                 }
                 morph.setKeys(keyFrames);
