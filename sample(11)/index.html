@@ -20,6 +20,7 @@
         <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
         <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
         <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+		<script src='state-machine.js'></script>
 
         <style>
             html, body {
@@ -40,6 +41,92 @@
 <body>
     <canvas id="renderCanvas"></canvas>
     <script>
+	//IMPORTANT FOR USE IN BABYLONJS PLAYGROUND
+	/*scriptName = "state-machine.js";
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = url;
+    document.head.appendChild(script);*/
+	//IMPORTANT FOR USE IN BABYLONJS PLAYGROUND
+	
+	const fsm = new StateMachine({
+		initial: '1',
+		transitions: [
+			{name: 'change', from: '1', to: '0'}
+		],
+		methods: {
+			onChange: function(){console.log("lip influence changed")},
+			
+		}
+	});
+	/*function createMachine(stateMachineDefinition){//we're also using this machine for thc state = machine.transition and console.logs at the bottom
+	const machine = {
+		value: stateMachineDefinition.initialState,//this is where we get the initial state of off.
+		transition(currentState, event){//this transition function is going to accept the current state and an event for switching the that current state to something else in state = machine.transition(state, 'switch')
+			const currentStateDefinition = stateMachineDefinition[currentState]//the currentState is going to be the string on or off and we're going to grab that state definition from state machine definition
+			const destinationTransition = currentStateDefinition.transitions[event];//grab the transitions object then grab the switch property from that transition object 
+			if(!destinationTransition){//if there's no destinationTransition then return
+				return
+			}
+			const destinationState = destinationTransition.target;
+			const destinationStateDefintion = stateMachineDefinition[destinationState];
+			destinationTransition.action();
+			currentStateDefinition.actions.onInfluence1();
+			destinationStateDefintion.actions.onInfluence0();
+			machine.value = destinationState;//this is where machine immediately is in the new state
+			return machine.value
+		}
+	}
+	return machine
+
+}
+
+	const machine = createMachine({
+		initialState: '1',
+		1: {
+			actions: {
+				onInfluence1(){
+					console.log("influence changed from 1 to 0");
+				},
+				onInfluence0(){
+					console.log("influence changed from 0 to 1");
+				},
+			},
+			transitions: {
+				switch: {
+					target: '0',
+					action(){
+						console.log('transition action for "switch" in influence 1 state');
+					},
+				},
+			},
+		},
+		0: {
+			actions: {
+				onInfluence0(){
+					console.log("influence changed from 0 to 1");
+				},
+				onInfluence1(){
+					console.log("influence changed from 1 to 0");
+				},
+			},
+			transitions: {
+				switch: {
+					target: '1',
+					action(){
+						console.log('transition action for "switch" in influence 0 state');
+					},
+				},
+			},
+		},
+	});
+let state = machine.value;
+console.log(`current state: ${state}`);
+state = machine.transition(state, "switch");
+console.log(`current state: ${state}`);
+state = machine.transition(state, "switch");
+console.log(`current state: ${state}`);*/
+
         var canvas = document.getElementById("renderCanvas");
 
         var startRenderLoop = function (engine, canvas) {
@@ -202,7 +289,13 @@ var createScene = function () {
                 //9 = casi morph target I
                 //10 = casi morph target FV
                 BABYLON.Animation.TransitionTo("influence", 1, casiBody.morphTargetManager.getTarget(9), scene, frameRate, morph, 6);//I
-                BABYLON.Animation.TransitionTo("influence", 0, casiBody.morphTargetManager.getTarget(9), scene, frameRate, morph, 8);
+				casiBody.morphTargetManager = fsm;//makes it so that casiBody.morphTargetManger will be connected to the state machine
+				console.log(fsm);
+				fsm.onChange();
+				//updateLips(casiBody.morphTargetManager.getTarget(9).influence);
+				//state = machine.transition(state, "switch");
+				//console.log(`current state: ${state}`);
+                /*BABYLON.Animation.TransitionTo("influence", 0, casiBody.morphTargetManager.getTarget(9), scene, frameRate, morph, 8);
                 BABYLON.Animation.TransitionTo("influence", 1, casiBody.morphTargetManager.getTarget(10), scene, frameRate, morph, 190);//f
                 BABYLON.Animation.TransitionTo("influence", 0, casiBody.morphTargetManager.getTarget(10), scene, frameRate, morph, 192);
                 BABYLON.Animation.TransitionTo("influence", 1, casiBody.morphTargetManager.getTarget(8), scene, frameRate, morph, 241);//e
@@ -222,7 +315,7 @@ var createScene = function () {
                 BABYLON.Animation.TransitionTo("influence", 1, casiBody.morphTargetManager.getTarget(7), scene, frameRate, morph, 1135);//u
                 BABYLON.Animation.TransitionTo("influence", 0, casiBody.morphTargetManager.getTarget(7), scene, frameRate, morph, 1137);
 
-                BABYLON.Animation.TransitionTo("influence", 1, casiBody.morphTargetManager.getTarget(10), scene, frameRate, morph, 664);
+                BABYLON.Animation.TransitionTo("influence", 1, casiBody.morphTargetManager.getTarget(10), scene, frameRate, morph, 664);*/
                 //BABYLON.Animation.TransitionTo("influence", 0.01, casiBody.morphTargetManager.getTarget(8), scene, frameRate, morph, 934);
                 //keyAction.start(true);
                 //console.log(casiBody.animations);
@@ -230,7 +323,11 @@ var createScene = function () {
                 /*for(var inde = 0; inde < obj.length; inde++){
 
                 }*/
-                
+                function updateLips(casiLipInfluence){
+					console.log(casiLipInfluence);
+					casiLipInfluence.influence = 1;
+                    console.log(casiLipInfluence);
+				}
 
                 let idx = 0
                 const vowels = ['a', 'e', 'o', 'u', 'i', 'f']
