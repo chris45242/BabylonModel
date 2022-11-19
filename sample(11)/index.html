@@ -40,16 +40,69 @@
     </head>
 <body>
     <canvas id="renderCanvas"></canvas>
+	<script type="module">
+	import { createMachina } from "https://cdn.jsdelivr.net/npm/xmachina@0.0.8/package.json";//'https://www.jsdelivr.com/package/npm/xmachina';
+	const lipState = {
+		Open: 'Open',
+		//Closed: 'Closed',
+	}
+
+	const lipTransition = {
+		OpenWide: 'OpenWide',
+		CloseMouth: 'CloseMouth',
+	}
+
+	const machine = createMachina(lipState.Closed)
+		.addState(lipState.Closed, {
+			description: "change influence from 1 to 0 or close Casi's mouth",
+			closed: lipTransition.OpenWide,
+			nextState: lipState.CloseMouth
+	}).build();
+	machina.subscribe((eventData) => console.log(`all ${eventData.event} -> ${eventData.value.new}`));
+	machina.start();
+	const newState = machina.trigger(lipTransition.OpenWide);
+	console.log(newState);
+	</script>
     <script>
 	//IMPORTANT FOR USE IN BABYLONJS PLAYGROUND
-	/*scriptName = "state-machine.js";
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = url;
-    document.head.appendChild(script);*/
+	//scriptName = "state-machine.js";
+    //var script = document.createElement("script");
+	//script.type = "module";
+	//import { createMachina } from "https://cdn.jsdelivr.net/npm/xmachina@0.0.8/package.json";//'https://www.jsdelivr.com/package/npm/xmachina';
+
+	//script.src = "https://cdn.jsdelivr.net/npm/xmachina@0.0.8/dist/index.min.js";
+	//script.src = "https://cdn.jsdelivr.net/npm/xmachina@0.0.8/package.json";
+	//document.head.appendChild(script);
+    //script.type = "text/javascript";
+    //script.src = url;
+    //document.head.appendChild(script);*/
 	//IMPORTANT FOR USE IN BABYLONJS PLAYGROUND
+	//if a vector is orthogonal to a subspace does that vector have to be orthogonal to every vector in that subspace
+	//for example 1 on page 349 in section 6.3 how do we know that the vector z2 is in W perpendicular
+	//import {createMachina} from 'xmachina';
 	
-	const fsm = new StateMachine({
+	/*const lipState = {
+		Open: 'Open',
+		//Closed: 'Closed',
+	}
+
+	const lipTransition = {
+		OpenWide: 'OpenWide',
+		CloseMouth: 'CloseMouth',
+	}
+
+	const machine = createMachina(lipState.Closed)
+		.addState(lipState.Closed, {
+			description: "change influence from 1 to 0 or close Casi's mouth",
+			closed: lipTransition.OpenWide,
+			nextState: lipState.CloseMouth
+	}).build();
+	machina.subscribe((eventData) => console.log(`all ${eventData.event} -> ${eventData.value.new}`));
+	machina.start();
+	const newState = machina.trigger(lipTransition.OpenWide);
+	console.log(newState);*/
+	
+	/*const fsm = new StateMachine({
 		initial: '1',
 		transitions: [
 			{name: 'change', from: '1', to: '0'}
@@ -58,7 +111,7 @@
 			onChange: function(){console.log("lip influence changed")},
 			
 		}
-	});
+	});*/
 	/*function createMachine(stateMachineDefinition){//we're also using this machine for thc state = machine.transition and console.logs at the bottom
 	const machine = {
 		value: stateMachineDefinition.initialState,//this is where we get the initial state of off.
@@ -221,14 +274,7 @@ var createScene = function () {
                 var casiMeshes = [scene.getMeshByName("Casi's Body.001_primitive0"), scene.getMeshByName("Casi's Body.001_primitive2"), scene.getMeshByName("Casi's Teeth")];
 				var keyAction = scene.getAnimationGroupByName("Key.002Action");
                 var influenceArray = {};
-
-                //keyAction.animations[0];
-                //var keyAction2 = new BABYLON.AnimationGroup("KeyAction");
                 
-                //console.log(keyAction.animations[0]);
-                //keyAction2.addTargetedAnimation(keyAction[0], casiBody);
-                var meshInfluence = [];
-                let ind = 0;
                 console.log(obj[1]['value']);
                 /*casiMeshes.forEach(mesh => {
                     //if the value of obj[t]['value] is e then get the morphTargetManager for e
@@ -281,6 +327,7 @@ var createScene = function () {
                 //console.log(keyAction);
                 //console.log(scene.getAnimationRatio());
                 casiBody.animations.push(morph);
+				var targets = [9, 10, 8, 7, 9, 7, 7, 9, 9, 7];//list of all target numbers for each morph target that need to be used for lip sync
                 //casiBody.morphTargetManager.getTarget(8).influence = 1;
                 //5 = Casi morph target O
                 //6 = casi morph target A
