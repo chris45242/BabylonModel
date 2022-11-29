@@ -40,11 +40,16 @@
     </head>
 <body>
     <canvas id="renderCanvas"></canvas>
+	<script src="https://cdn.jsdelivr.net/npm/xmachina@0.0.8/dist/index.min.js"></script>
 	<script type="module">
-	import { createMachina } from "https://cdn.jsdelivr.net/npm/xmachina@0.0.8/package.json";//'https://www.jsdelivr.com/package/npm/xmachina';
+	//var response = "https://www.jsdelivr.com/package/npm/xmachina";
+	//response.setHeader('Content-Type', 'text/html');
+	import { machina } from "https://cdn.jsdelivr.net/npm/xmachina@0.0.8/dist/index.min.js";
+	//import { createMachina } from "https://www.jsdelivr.com/package/npm/xmachina";
+	//import { createMachina } from "https://cdn.jsdelivr.net/npm/xmachina@0.0.8/package.json";//'https://www.jsdelivr.com/package/npm/xmachina';
 	const lipState = {
 		Open: 'Open',
-		//Closed: 'Closed',
+		Closed: 'Closed',
 	}
 
 	const lipTransition = {
@@ -62,6 +67,7 @@
 	machina.start();
 	const newState = machina.trigger(lipTransition.OpenWide);
 	console.log(newState);
+	
 	</script>
     <script>
 	//IMPORTANT FOR USE IN BABYLONJS PLAYGROUND
@@ -327,7 +333,6 @@ var createScene = function () {
                 //console.log(keyAction);
                 //console.log(scene.getAnimationRatio());
                 casiBody.animations.push(morph);
-				var targets = [9, 10, 8, 7, 9, 7, 7, 9, 9, 7];//list of all target numbers for each morph target that need to be used for lip sync
                 //casiBody.morphTargetManager.getTarget(8).influence = 1;
                 //5 = Casi morph target O
                 //6 = casi morph target A
@@ -335,10 +340,25 @@ var createScene = function () {
                 //8 = casi morph target E
                 //9 = casi morph target I
                 //10 = casi morph target FV
-                BABYLON.Animation.TransitionTo("influence", 1, casiBody.morphTargetManager.getTarget(9), scene, frameRate, morph, 6);//I
-				casiBody.morphTargetManager = fsm;//makes it so that casiBody.morphTargetManger will be connected to the state machine
-				console.log(fsm);
-				fsm.onChange();
+				let j = 0;
+                var timeArray = [6, 68, 51, 41, 94, 65, 47, 85, 76, 136];//Array that shows how long each lip position should be taken when influence = 1
+                var targets = [9, 10, 8, 7, 9, 7, 7, 9, 9, 7];//Array that shows the order in which morph targets should be used to lip sync
+                async function* generateSequence(casiInfluence){
+                    yield new Promise((resolve, reject) => {
+                        setTimeout(() => resolve(casiBody.morphTargetManager.getTarget(targets[j]).influence = 1), timeArray[j]);
+                        console.log(timeArray[j]);
+                    });
+                }
+                (async function main(){
+                    for await(const result of generateSequence()){
+                        console.log(result);
+                        j++;
+                    }
+                }());
+                //BABYLON.Animation.TransitionTo("influence", 1, casiBody.morphTargetManager.getTarget(9), scene, frameRate, morph, 6);//I
+				//casiBody.morphTargetManager = fsm;//makes it so that casiBody.morphTargetManger will be connected to the state machine
+				//console.log(fsm);
+				//fsm.onChange();
 				//updateLips(casiBody.morphTargetManager.getTarget(9).influence);
 				//state = machine.transition(state, "switch");
 				//console.log(`current state: ${state}`);
@@ -375,6 +395,13 @@ var createScene = function () {
 					casiLipInfluence.influence = 1;
                     console.log(casiLipInfluence);
 				}
+				
+				let inf = 0;
+				scene.onBeforeRenderObservable.add(async function(){
+					casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.sin(inf));
+                    casiOtherEyebrows.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(inf));
+                    inf += 0.07;
+				});
 
                 let idx = 0
                 const vowels = ['a', 'e', 'o', 'u', 'i', 'f']
