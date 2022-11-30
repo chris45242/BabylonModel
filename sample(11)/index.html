@@ -343,6 +343,7 @@ var createScene = function () {
 				let j = 0;
                 var timeArray = [6, 68, 51, 41, 94, 65, 47, 85, 76, 136];//Array that shows how long each lip position should be taken when influence = 1
                 var targets = [9, 10, 8, 7, 9, 7, 7, 9, 9, 7];//Array that shows the order in which morph targets should be used to lip sync
+				let generator = generateSequence();
                 async function* generateSequence(casiInfluence){
                     yield new Promise((resolve, reject) => {
                         setTimeout(() => resolve(casiBody.morphTargetManager.getTarget(targets[j]).influence = 1), timeArray[j]);
@@ -350,9 +351,10 @@ var createScene = function () {
                     });
                 }
                 (async function main(){
-                    for await(const result of generateSequence()){
+                    for await(var result of generateSequence()){
                         console.log(result);
                         j++;
+						result = generator.next();
                     }
                 }());
                 //BABYLON.Animation.TransitionTo("influence", 1, casiBody.morphTargetManager.getTarget(9), scene, frameRate, morph, 6);//I
