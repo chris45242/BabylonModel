@@ -200,33 +200,49 @@ console.log(`current state: ${state}`);*/
         var scene = null;
         var sceneToRender = null;
         var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
-        var jsonParsed = //'[{"time":6,"type":"word","start":0,"end":4,"value":"it\'s"},'+
-                '[{"time":6,"type":"viseme","value":"i"},' +
+        var jsonParsed = '[{"time":6,"type":"word","start":0,"end":4,"value":"it\'s"},'+
+                '{"time":6,"type":"viseme","value":"i"},' +
                 '{"time":64,"type":"viseme","value":"t"},' +
                 '{"time":122,"type":"viseme","value":"s"},' +
-                //'{"time":190,"type":"word","start":5,"end":9,"value":"very"},' +
+                '{"time":190,"type":"word","start":5,"end":9,"value":"very"},' +
                 '{"time":190,"type":"viseme","value":"f"},' +
                 '{"time":241,"type":"viseme","value":"E"},' +
                 '{"time":282,"type":"viseme","value":"r"},' +
                 '{"time":376,"type":"viseme","value":"i"},' +
-                //'{"time":416,"type":"word","start":10,"end":14,"value":"good"},' +
+                '{"time":416,"type":"word","start":10,"end":14,"value":"good"},' +
                 '{"time":416,"type":"viseme","value":"k"},' +
                 '{"time":481,"type":"viseme","value":"u"},' +
                 '{"time":576,"type":"viseme","value":"t"},' +
-                //'{"time":627,"type":"word","start":15,"end":17,"value":"to"},' +
+                '{"time":627,"type":"word","start":15,"end":17,"value":"to"},' +
                 '{"time":627,"type":"viseme","value":"t"},' +
                 '{"time":674,"type":"viseme","value":"u"},' +
-                //'{"time":716,"type":"word","start":18,"end":22,"value":"meet"},' +
+                '{"time":716,"type":"word","start":18,"end":22,"value":"meet"},' +
                 '{"time":716,"type":"viseme","value":"p"},' +
                 '{"time":801,"type":"viseme","value":"i"},' +
                 '{"time":923,"type":"viseme","value":"t"},' +
-                //'{"time":999,"type":"word","start":23,"end":26,"value":"you"},' +
+                '{"time":999,"type":"word","start":23,"end":26,"value":"you"},' +
                 '{"time":999,"type":"viseme","value":"i"},' +
                 '{"time":1135,"type":"viseme","value":"u"},' +
                 '{"time":1357,"type":"viseme","value":"sil"}]';
 var obj = JSON.parse(jsonParsed);                
 let t = 0;
 console.log(obj);
+var startTime = obj[t]['start'];
+var endTime = obj[t]['end'];
+var startTimeArray = [];
+var endTimeArray = [];
+for(var e = 0; e < obj.length; e++){
+	if(startTime !== null && endTime !== null){
+		startTimeArray.push(obj[e]['start']);
+		endTimeArray.push(obj[e]['end']);
+	}
+}
+console.log(startTimeArray);
+console.log(endTimeArray);
+var currentTime = Math.max(0, endTime + startTime);
+console.log(startTime);
+console.log(endTime);
+console.log(currentTime);
 
 var lipChange = function(data){
     for(var index = 0; index < obj.length; index++){
@@ -257,6 +273,9 @@ var createScene = function () {
 
     url = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
     fileName = "project.blend1(UPDATED).gltf";
+	
+	//adds a background to the scene
+	var layer = new BABYLON.Layer('', url + "Cyber_Background.jpg", scene, true);
 
     const Casi = BABYLON.SceneLoader.Append(url, fileName, scene, function (s){
                 // Create a default arc rotate camera and light.
@@ -279,6 +298,7 @@ var createScene = function () {
                 var casiOtherEyebrows = scene.getMeshByName("Casi's Other Eyebrows");
                 var casiMeshes = [scene.getMeshByName("Casi's Body.001_primitive0"), scene.getMeshByName("Casi's Body.001_primitive2"), scene.getMeshByName("Casi's Teeth")];
 				var keyAction = scene.getAnimationGroupByName("Key.002Action");
+				
                 var influenceArray = {};
                 
                 console.log(obj[1]['value']);
@@ -340,10 +360,30 @@ var createScene = function () {
                 //8 = casi morph target E
                 //9 = casi morph target I
                 //10 = casi morph target FV
+				var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+				var button1 = BABYLON.GUI.Button.CreateSimpleButton("but1", "Click Me");
+				button1.width = "150px"
+				button1.height = "40px";
+				button1.color = "white";
+				button1.background = "green";
 				let j = 0;
                 var timeArray = [6, 68, 51, 41, 94, 65, 47, 85, 76, 136];//Array that shows how long each lip position should be taken when influence = 1
                 var targets = [9, 10, 8, 7, 9, 7, 7, 9, 9, 7];//Array that shows the order in which morph targets should be used to lip sync
-				let generator = generateSequence();
+				button1.onPointerUpObservable.add(function(){
+					for(let scheduledTimeMS = 0, i = 0; i < timeArray.length; i++){
+						const numberToPrint = targets[i];
+						const delay = timeArray[i];
+						scheduledTimeMS += delay;
+						console.log(delay);
+						setTimeout(() => casiBody.morphTargetManager.getTarget(targets[i]).influence = 1, scheduledTimeMS);
+						
+						//console.log(scheduledTimeMS);
+						/*setTimeout(() => casiBody.morphTargetManager.getTarget(targets[i]).influence = 0, updatedTime);
+						console.log(updatedTime);*/
+					}
+					});
+				advancedTexture.addControl(button1);
+				/*let generator = generateSequence();
                 async function* generateSequence(casiInfluence){
                     yield new Promise((resolve, reject) => {
                         setTimeout(() => resolve(casiBody.morphTargetManager.getTarget(targets[j]).influence = 1), timeArray[j]);
@@ -356,7 +396,15 @@ var createScene = function () {
                         j++;
 						result = generator.next();
                     }
-                }());
+                }());*/
+				/*var fsm = new StateMachine({
+                    init: '1',
+                    transitions:[
+                        {name: '0 to 1', from: '1', to: '0'}
+                    ]
+                });
+                console.log(fsm.state);
+				casiBody.morphTargetManager.getTarget(5).influence = fsm.state;*/
                 //BABYLON.Animation.TransitionTo("influence", 1, casiBody.morphTargetManager.getTarget(9), scene, frameRate, morph, 6);//I
 				//casiBody.morphTargetManager = fsm;//makes it so that casiBody.morphTargetManger will be connected to the state machine
 				//console.log(fsm);
@@ -392,18 +440,15 @@ var createScene = function () {
                 /*for(var inde = 0; inde < obj.length; inde++){
 
                 }*/
-                function updateLips(casiLipInfluence){
-					console.log(casiLipInfluence);
-					casiLipInfluence.influence = 1;
-                    console.log(casiLipInfluence);
-				}
-				
+				//Make Casi repeatedly blink
 				let inf = 0;
-				scene.onBeforeRenderObservable.add(async function(){
-					casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.sin(inf));
-                    casiOtherEyebrows.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(inf));
-                    inf += 0.07;
-				});
+				//setInterval(() => {
+					scene.onBeforeRenderObservable.add(async function(){
+						casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.sin(inf));
+						casiOtherEyebrows.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(inf));
+						inf += 0.07;
+					});
+				//}, 20000);
 
                 let idx = 0
                 const vowels = ['a', 'e', 'o', 'u', 'i', 'f']
