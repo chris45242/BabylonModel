@@ -376,12 +376,12 @@ var createScene = function () {
 						scheduledTimeMS += delay;
 						console.log(delay);
 						setTimeout(() => casiBody.morphTargetManager.getTarget(targets[i]).influence = 1, scheduledTimeMS);
-						
-						//console.log(scheduledTimeMS);
-						/*setTimeout(() => casiBody.morphTargetManager.getTarget(targets[i]).influence = 0, updatedTime);
-						console.log(updatedTime);*/
+						let otherElements = targets.filter((item) => {
+							return item != targets[i];
+						});
+						console.log(otherElements);
 					}
-					});
+				});
 				advancedTexture.addControl(button1);
 				/*let generator = generateSequence();
                 async function* generateSequence(casiInfluence){
