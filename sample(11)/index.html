@@ -20,9 +20,16 @@
         <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
         <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
         <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
-		<script src='state-machine.js'></script>
+		
 
         <style>
+			#timer {
+				position: absolute;
+				top: 96px;
+				right: 24px;
+				color: red;
+			}
+			
             html, body {
                 overflow: hidden;
                 width: 100%;
@@ -40,11 +47,11 @@
     </head>
 <body>
     <canvas id="renderCanvas"></canvas>
-	<script src="https://cdn.jsdelivr.net/npm/xmachina@0.0.8/dist/index.min.js"></script>
+	<div id="timer"></div>
 	<script type="module">
 	//var response = "https://www.jsdelivr.com/package/npm/xmachina";
 	//response.setHeader('Content-Type', 'text/html');
-	import { machina } from "https://cdn.jsdelivr.net/npm/xmachina@0.0.8/dist/index.min.js";
+	/*import { machina } from "https://cdn.jsdelivr.net/npm/xmachina@0.0.8/dist/index.min.js";
 	//import { createMachina } from "https://www.jsdelivr.com/package/npm/xmachina";
 	//import { createMachina } from "https://cdn.jsdelivr.net/npm/xmachina@0.0.8/package.json";//'https://www.jsdelivr.com/package/npm/xmachina';
 	const lipState = {
@@ -66,7 +73,7 @@
 	machina.subscribe((eventData) => console.log(`all ${eventData.event} -> ${eventData.value.new}`));
 	machina.start();
 	const newState = machina.trigger(lipTransition.OpenWide);
-	console.log(newState);
+	console.log(newState);*/
 	
 	</script>
     <script>
@@ -227,29 +234,13 @@ console.log(`current state: ${state}`);*/
 var obj = JSON.parse(jsonParsed);                
 let t = 0;
 console.log(obj);
-var startTime = obj[t]['start'];
-var endTime = obj[t]['end'];
-var startTimeArray = [];
-var endTimeArray = [];
-for(var e = 0; e < obj.length; e++){
-	if(startTime !== null && endTime !== null){
-		startTimeArray.push(obj[e]['start']);
-		endTimeArray.push(obj[e]['end']);
-	}
-}
-console.log(startTimeArray);
-console.log(endTimeArray);
-var currentTime = Math.max(0, endTime + startTime);
-console.log(startTime);
-console.log(endTime);
-console.log(currentTime);
 
-var lipChange = function(data){
+/*var lipChange = function(data){
     for(var index = 0; index < obj.length; index++){
         data[index] = obj[index]["value"];
         console.log(data);
     }
-}
+}*/
 
 
 var createScene = function () {
@@ -299,9 +290,7 @@ var createScene = function () {
                 var casiMeshes = [scene.getMeshByName("Casi's Body.001_primitive0"), scene.getMeshByName("Casi's Body.001_primitive2"), scene.getMeshByName("Casi's Teeth")];
 				var keyAction = scene.getAnimationGroupByName("Key.002Action");
 				
-                var influenceArray = {};
-                
-                console.log(obj[1]['value']);
+				
                 /*casiMeshes.forEach(mesh => {
                     //if the value of obj[t]['value] is e then get the morphTargetManager for e
                     if(mesh.morphTargetManager !== null && obj[ind]['value'] === 'o'){
@@ -369,20 +358,54 @@ var createScene = function () {
 				let j = 0;
                 var timeArray = [6, 68, 51, 41, 94, 65, 47, 85, 76, 136];//Array that shows how long each lip position should be taken when influence = 1
                 var targets = [9, 10, 8, 7, 9, 7, 7, 9, 9, 7];//Array that shows the order in which morph targets should be used to lip sync
+				var milliTimeArray = [0.006, 0.068, 0.051, 0.041, 0.094, 0.065, 0.047, 0.085, 0.076, 0.136] //Array in milliseconds that shows how long each lip position should be taken when influence = 1
 				button1.onPointerUpObservable.add(function(){
-					for(let scheduledTimeMS = 0, i = 0; i < timeArray.length; i++){
+					const coroutineFunc = function* () {
+						casiBody.morphTargetManager.getTarget(targets[j]).influence = 1;
+						//console.log(targets[j]);
+						yield;
+						//console.log(targets[j+1]);
+						casiBody.morphTargetManager.getTarget(targets[j]).influence = 0;
+						//j++;
+						console.log(targets[j]);
+						};
+
+					const asynchronousFunc = async function () {
+						for(let scheduledTimeMS = 0, i = 0; i < milliTimeArray.length; i++){
+							var start = window.performance.now();
+							const delay = milliTimeArray[i];
+							scheduledTimeMS += delay;
+							await BABYLON.Tools.DelayAsync(scheduledTimeMS);
+							await scene.onBeforeRenderObservable.runCoroutineAsync(coroutineFunc());
+							await BABYLON.Tools.DelayAsync(scheduledTimeMS);
+							var end = window.performance.now();
+							console.log(`Execution time: ${end - start} ms`);
+							j++;
+						}
+					};
+	
+					
+					/*for(let scheduledTimeMS = 0, i = 0; i < milliTimeArray.length; i++){
 						const numberToPrint = targets[i];
-						const delay = timeArray[i];
+						const delay = milliTimeArray[i];
 						scheduledTimeMS += delay;
 						console.log(delay);
 						setTimeout(() => casiBody.morphTargetManager.getTarget(targets[i]).influence = 1, scheduledTimeMS);
+						//This filter method gets every other element in targets array that we're not using for the current morph target
 						let otherElements = targets.filter((item) => {
 							return item != targets[i];
 						});
 						console.log(otherElements);
-					}
+						//This filter method gets rid of all duplicate elements from the otherElements array and puts the new array in variable removeduplic
+						let removeduplic = otherElements.filter((c, duplic) => {
+							return otherElements.indexOf(c) === duplic;
+						});
+						console.log(removeduplic);
+					}*/
+					asynchronousFunc();
 				});
 				advancedTexture.addControl(button1);
+				
 				/*let generator = generateSequence();
                 async function* generateSequence(casiInfluence){
                     yield new Promise((resolve, reject) => {
@@ -447,9 +470,25 @@ var createScene = function () {
 						casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.sin(inf));
 						casiOtherEyebrows.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(inf));
 						inf += 0.07;
+						await BABYLON.Tools.DelayAsync(15000);
 					});
 				//}, 20000);
+				const fps = engine.getFps();
+				const ANIMATION_DURATION = 10; // animation should take 10 seconds
+				const frameCount = fps * ANIMATION_DURATION;
+				let runtimeAnimations = animGroup.targetedAnimations[0].animation.runtimeAnimations;
 
+				scene.registerBeforeRender(function(){
+					let curFrame = runtimeAnimations[0].currentFrame;
+					// Frame counter
+					timer.innerText = 'COUNTDOWN FRAME ' + (frameCount-curFrame.toFixed());
+
+					//Time counter
+					let frameToTime = (frameCount-curFrame)/morph.framePerSecond;
+					timer.innerText += ' COUNTDOWN TIME ' + frameToTime.toFixed();
+									
+				});
+				
                 let idx = 0
                 const vowels = ['a', 'e', 'o', 'u', 'i', 'f']
                 var soundURL = "speech.mp3";
