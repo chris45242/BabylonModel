@@ -321,6 +321,7 @@ var createScene = function () {
                 var frameRate = 30;
                 var morph = new BABYLON.Animation('morph', 'influence', frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
                 //var keyAction = scene.getAnimationGroupByName("Key.002Action");
+				var keyAction2 = new BABYLON.AnimationGroup("KeyAction2");
                 const keyFrames = [];
 				//For each time value in the jsonParsed array make a keyframe at the position indicated for the time
                 for(var t = 0; t < obj.length; t++){
@@ -338,10 +339,11 @@ var createScene = function () {
                     console.log(keyFrames.frame);
                 }
                 morph.setKeys(keyFrames);
-                //keyAction.addTargetedAnimation(morph);
+                keyAction2.addTargetedAnimation(morph, casiBody);
                 //console.log(keyAction);
                 //console.log(scene.getAnimationRatio());
                 casiBody.animations.push(morph);
+				keyAction2.play(true);
                 //casiBody.morphTargetManager.getTarget(8).influence = 1;
                 //5 = Casi morph target O
                 //6 = casi morph target A
