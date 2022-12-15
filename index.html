@@ -103,7 +103,7 @@
       <button id="speaker" class="btn default" >Synthesize</button>
       <p id="result">Enter text above then click Synthesize</p>
     </div>
-    <audio id="audioPlayback" autoplay>
+    <audio id="audioPlayback" >
       <source id="audioSource" type="audio/mp3" src="">
     </audio>
     <script type="text/javascript" src="config.js"></script>
@@ -113,9 +113,11 @@
         var passJSON, againJson, timeLapsed, jsonParsed;
         var indx = 0;
         var visemeArray = [];
-        var myURL = {
+        var speechURL = {
             source: ""
         };
+        var visemeObj = [{}];
+        var timeObj = {};
         var timeArray = [];
         const vowels = ['a', 'e', 'o', 'u', 'i', 'f'];
         
@@ -155,8 +157,9 @@
                     str = str.substring(0, newJson);
                     againJson = str+"]";
                     jsonParsed = JSON.parse(againJson);
-                    console.log(jsonParsed);
-                    
+                    //empty the contents of visemeObj and timeObj object arrays so I won't still have the previous contents I got from last button click 
+                    //visemeObj = [{}];
+                    //timeObj = [{}];
                     for(var i = 0; i < jsonParsed.length; i++){
                         viseme = jsonParsed[i]['value'];
                         time = jsonParsed[i]['time'];
@@ -165,17 +168,17 @@
                         timeLapsed = endTime - startTime;
                         //checks if the viseme is included in the vowels array and if it's one letter viseme
                         if(viseme.charAt(1) === "" && vowels.includes(viseme)){
-                            visemeArray.push(viseme);
+                            visemeObj.push(viseme);
                         }
                         //moves decimal point 3 decimal places
                         time /= Math.pow(10, 3);
+                        const rawMaterial = {[`${i}`]: ''};
                         //if the time we have is not in the timeArray then add it to timeArray
-                        if(!timeArray.includes(time)){
-                            timeArray.push(time);
+                        if(!Object.values(timeObj).includes(time)){
+                        //if(!timeObj.includes(time)){
+                            //timeObj.push(time);
+                            Object.assign(timeObj, {[`${i}`]: time});
                         }
-                        console.log(visemeArray);
-                        console.log(timeArray);
-                        
                         //calls function loop and passes in timeLapsed, againJson, viseme,
                         //and time as parameters.
                         //loop(timeLapsed, againJson, viseme, time);
@@ -230,18 +233,17 @@
                     document.getElementById('result').innerHTML = error;
                 } else {
                     document.getElementById('audioSource').src = url;
-                    myURL.source = url;//set myURL object equal to url to use in createScene function
+                    speechURL.source = url;//set myURL object equal to url to use in createScene function
                     document.getElementById('audioPlayback').load();
                     document.getElementById('result').innerHTML = "Speech ready to play.";
                     document.getElementById('playButton');
                 }
-                return url;
             });
             };
 var canvas = document.getElementById("renderCanvas");
 var currentGroup;
 //var lipSync;
-let t = 0;
+let j = 0;
 var lipPositionProperties;
 
  
@@ -300,7 +302,77 @@ var createScene = function() {
                     console.log("click");
                     speakText();
                     soundText();
-                    console.log(myURL);
+                    console.log(speechURL);
+                    console.log(timeObj);
+                    console.log(visemeObj);
+                    var milliTimeArray = Object.entries(timeObj);
+                    console.log(milliTimeArray);
+                    var targets = [];
+                    for(const property in visemeObj){
+                        console.log(property);
+                    }
+                    //5 = Casi morph target O
+                    //6 = casi morph target A
+                    //7 = casi morph target U
+                    //8 = casi morph target E
+                    //9 = casi morph target I
+                    //10 = casi morph target FV
+                    /*for(let t = 0; t < visemeObj.length; t++){
+                        if(visemeObj[t] === 'e'){ 
+                            targets.push(8); 
+                            console.log(targets[t]);
+                        }
+                        if(visemeObj[t] === 'a'){ 
+                            targets.push(6); 
+                            console.log(targets[t]);
+                        }
+                        if(visemeObj[t] === 'o'){ 
+                            targets.push(5); 
+                            console.log(targets[t]);
+                        }
+                        if(visemeObj[t] === 'u'){ 
+                            targets.push(7); 
+                            console.log(targets[t]);
+                        }
+                        if(visemeObj[t] === 'i'){ 
+                            targets.push(9); 
+                            console.log(targets[t]);
+                        }
+                        if(visemeObj[t] === 'f' || visemeObj[t] === 'v'){ 
+                            targets.push(10);
+                            console.log(targets[t]);
+                        }
+                    }*/
+                    console.log(targets);
+                    var speech = new BABYLON.Sound("speech", speechURL.source, scene);
+                    j = 0;//reset j back to 0 so we won't get an undefined error message when clicking the button a second time
+                    speech.play();
+                    const coroutineFunc = function* () {
+                        casiBody.morphTargetManager.getTarget(targets[j]).influence = 1;
+			casiInnerMouth.morphTargetManager.getTarget(targets[j]).influence = 1;
+			yield;
+                        console.log(targets[j]);
+			casiBody.morphTargetManager.getTarget(targets[j]).influence = 0;
+			casiInnerMouth.morphTargetManager.getTarget(targets[j]).influence = 0;
+			console.log(targets[j]);
+                    };
+
+                    const asynchronousFunc = async function () {
+			for(let scheduledTimeMS = 0, i = 0; i < timeObj.length; i++){
+                            //var start = window.performance.now();
+                            const delay = timeObj[i];
+                            console.log(delay);
+                            scheduledTimeMS += delay;
+                            console.log(scheduledTimeMS);
+                            await BABYLON.Tools.DelayAsync(scheduledTimeMS);//wait for the amount of milliseconds in the milliTimeArray
+                            await scene.onBeforeRenderObservable.runCoroutineAsync(coroutineFunc());
+                            await BABYLON.Tools.DelayAsync(scheduledTimeMS);
+                            //var end = window.performance.now();
+                            //console.log(`Execution time: ${end - start} ms`);
+                            j++;
+                            }
+			};
+                    asynchronousFunc();
                     //var intervalID = setInterval(inter, timeArray[0]);
                     //intervalID = setInterval(inter, timeArray[indx]);
                     //visemeArray.forEach(inter);
