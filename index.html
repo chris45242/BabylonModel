@@ -112,13 +112,13 @@
         var viseme, time, startTime, endTime;
         var passJSON, againJson, timeLapsed, jsonParsed;
         var indx = 0;
-        var visemeArray = [];
+        var visemeArray = new Array;
         var speechURL = {
             source: ""
         };
         var visemeObj = [{}];
         var timeObj = {};
-        var timeArray = [];
+        var timeArray = new Array;
         const vowels = ['a', 'e', 'o', 'u', 'i', 'f'];
         
         // Function invoked by button click
@@ -168,16 +168,29 @@
                         timeLapsed = endTime - startTime;
                         //checks if the viseme is included in the vowels array and if it's one letter viseme
                         if(viseme.charAt(1) === "" && vowels.includes(viseme)){
-                            visemeObj.push(viseme);
+                            visemeArray.push(viseme);
+                            //visemeObj.push(viseme);
                         }
                         //moves decimal point 3 decimal places
                         time /= Math.pow(10, 3);
-                        const rawMaterial = {[`${i}`]: ''};
+                        //const rawMaterial = {[`${i}`]: ''};
                         //if the time we have is not in the timeArray then add it to timeArray
-                        if(!Object.values(timeObj).includes(time)){
+                        //if(!Object.values(timeObj).includes(time)){
+                            /*if((indx - 1) !== i){
+                                i--;
+                                Object.assign(timeObj, {[`${i}`]: time});
+                                i++;
+                            }*/
+                            //else{
+                        if(!timeArray.includes(time)){
                         //if(!timeObj.includes(time)){
-                            //timeObj.push(time);
-                            Object.assign(timeObj, {[`${i}`]: time});
+                            timeArray.push(time);
+                             //timeObj.push(time);
+                            //Object.assign(timeObj, {[`${i}`]: time});
+                                
+                        //}
+                        //indx = i;
+                        //console.log(indx);       
                         }
                         //calls function loop and passes in timeLapsed, againJson, viseme,
                         //and time as parameters.
@@ -188,7 +201,6 @@
                         //if viseme equals u or r then use morphtargetmanager to change mouth to o
                         //return viseme;
                     }
-                    
                 }).catch(error => {throw error});
                /* function processJSON(passJSON, newViseme, newTime, newStartTime, newEndTime){
                             passJSON.value = againJson;
@@ -302,15 +314,26 @@ var createScene = function() {
                     console.log("click");
                     speakText();
                     soundText();
-                    console.log(speechURL);
-                    console.log(timeObj);
-                    console.log(visemeObj);
-                    var milliTimeArray = Object.entries(timeObj);
-                    console.log(milliTimeArray);
                     var targets = [];
-                    for(const property in visemeObj){
-                        console.log(property);
-                    }
+                    console.log(speechURL);
+                    console.log(timeArray);
+                    //console.log(timeObj);
+                    console.log(visemeArray);
+                    var milliTimeArray = [];
+                    //timeObj.map()
+                    /*Object.values(timeObj).forEach(key => {
+                        milliTimeArray.push(key);
+                        
+                    });
+                    console.log(milliTimeArray);
+                    
+                    Object.values(visemeObj).forEach(key => {
+                        milliTimeArray.push(key);
+                        console.log(milliTimeArray);
+                    });*/
+                    /*for(var property in timeObj){
+                        console.log(timeObj[property]);
+                    }*/
                     //5 = Casi morph target O
                     //6 = casi morph target A
                     //7 = casi morph target U
