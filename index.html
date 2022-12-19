@@ -119,6 +119,7 @@
         var visemeObj = [{}];
         var timeObj = {};
         var timeArray = new Array;
+        var targets = new Array;
         const vowels = ['a', 'e', 'o', 'u', 'i', 'f'];
         
         // Function invoked by button click
@@ -166,9 +167,22 @@
                         startTime = jsonParsed[i]['start'];
                         endTime = jsonParsed[i]['end'];
                         timeLapsed = endTime - startTime;
+                        //5 = Casi morph target O
+                        //6 = casi morph target A
+                        //7 = casi morph target U
+                        //8 = casi morph target E
+                        //9 = casi morph target I
+                        //10 = casi morph target FV
                         //checks if the viseme is included in the vowels array and if it's one letter viseme
                         if(viseme.charAt(1) === "" && vowels.includes(viseme)){
                             visemeArray.push(viseme);
+                            //add the morph target that should be used for each viseme to targets array
+                            if(viseme === 'a'){ targets.push(6); }
+                            else if(viseme === 'o'){ targets.push(5); }
+                            else if(viseme === 'u'){ targets.push(7); }
+                            else if(viseme === 'e'){ targets.push(8); }
+                            else if(viseme === 'i'){ targets.push(9); }
+                            else { targets.push(10); }
                             //visemeObj.push(viseme);
                         }
                         //moves decimal point 3 decimal places
@@ -314,10 +328,9 @@ var createScene = function() {
                     console.log("click");
                     speakText();
                     soundText();
-                    var targets = [];
+                    
                     console.log(speechURL);
                     console.log(timeArray);
-                    //console.log(timeObj);
                     console.log(visemeArray);
                     var milliTimeArray = [];
                     //timeObj.map()
@@ -340,34 +353,9 @@ var createScene = function() {
                     //8 = casi morph target E
                     //9 = casi morph target I
                     //10 = casi morph target FV
-                    /*for(let t = 0; t < visemeObj.length; t++){
-                        if(visemeObj[t] === 'e'){ 
-                            targets.push(8); 
-                            console.log(targets[t]);
-                        }
-                        if(visemeObj[t] === 'a'){ 
-                            targets.push(6); 
-                            console.log(targets[t]);
-                        }
-                        if(visemeObj[t] === 'o'){ 
-                            targets.push(5); 
-                            console.log(targets[t]);
-                        }
-                        if(visemeObj[t] === 'u'){ 
-                            targets.push(7); 
-                            console.log(targets[t]);
-                        }
-                        if(visemeObj[t] === 'i'){ 
-                            targets.push(9); 
-                            console.log(targets[t]);
-                        }
-                        if(visemeObj[t] === 'f' || visemeObj[t] === 'v'){ 
-                            targets.push(10);
-                            console.log(targets[t]);
-                        }
-                    }*/
                     console.log(targets);
                     var speech = new BABYLON.Sound("speech", speechURL.source, scene);
+                    console.log(speechURL.source);
                     j = 0;//reset j back to 0 so we won't get an undefined error message when clicking the button a second time
                     speech.play();
                     const coroutineFunc = function* () {
@@ -381,9 +369,9 @@ var createScene = function() {
                     };
 
                     const asynchronousFunc = async function () {
-			for(let scheduledTimeMS = 0, i = 0; i < timeObj.length; i++){
+			for(let scheduledTimeMS = 0, i = 0; i < timeArray.length; i++){
                             //var start = window.performance.now();
-                            const delay = timeObj[i];
+                            const delay = timeArray[i];
                             console.log(delay);
                             scheduledTimeMS += delay;
                             console.log(scheduledTimeMS);
