@@ -26,7 +26,8 @@
         <!-- Text to speech Dependency -->
         <script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.983.0.min.js"></script>
     
-        <script data-main="libs/main" src="libs/require.js"></script>
+        <!--<script data-main="libs/main" src="libs/require.js"></script>-->
+        <script src="require.js"></script>
 
         <style>
             html, body {
@@ -108,28 +109,54 @@
     </audio>
     <script type="text/javascript" src="config.js"></script>
     <script type="text/javascript">
-        var $ = function(id){ return document.getElementById(id);};
+        //const fs = require(['fs']);
         var viseme, time, startTime, endTime;
         var passJSON, againJson, timeLapsed, jsonParsed;
-        var indx = 0;
-        var visemeArray = new Array;
+        var visemeArray = [];
+        //var visemeArray = new Array();
+        var soundURL;
         var speechURL = {
-            source: ""
+            source: ''
         };
-        var visemeObj = [{}];
+        var visemeObj = {};
         var timeObj = {};
-        var timeArray = new Array;
-        var targets = new Array;
+        var targetsObj = {};
+        class dataArray {
+            constructor() {
+              this.length = 0;
+              this.data = {};//Object to store the elements
+            }
+            push(element){
+              this.data[this.length] = element;
+              this.length++;
+              return this.length;
+            }
+          }
+        var syncObj = {
+            targetSync: [],
+            visemeSync: [],
+            timeSync: [],
+            jsonSync: '',
+            getVisemeData: function(){
+                return this.visemeSync;
+            },
+            setLength: function(){//increments the length of array so array length won't be 0
+                return this.length + 1;
+            }
+        };
+        //var timeArray = new Array();
+        //var targets = new Array();
+        var timeArray = [];
+        var targets = [];
         const vowels = ['a', 'e', 'o', 'u', 'i', 'f'];
         
+        //figure out a way to pass parameters by reference
         // Function invoked by button click
         function speakText() {
             
             // Create the JSON parameters for getSynthesizeSpeechUrl
             var speechParams = {
                 OutputFormat: "json",
-                //OutputFormat: "mp3",
-                //OutputS3BucketName: "casi-bucket",
                 SampleRate: "16000",
                 Text: "",
                 TextType: "text",
@@ -158,15 +185,14 @@
                     str = str.substring(0, newJson);
                     againJson = str+"]";
                     jsonParsed = JSON.parse(againJson);
+                    syncObj.jsonSync = jsonParsed;
                     //empty the contents of visemeObj and timeObj object arrays so I won't still have the previous contents I got from last button click 
-                    //visemeObj = [{}];
-                    //timeObj = [{}];
                     for(var i = 0; i < jsonParsed.length; i++){
                         viseme = jsonParsed[i]['value'];
                         time = jsonParsed[i]['time'];
-                        startTime = jsonParsed[i]['start'];
-                        endTime = jsonParsed[i]['end'];
-                        timeLapsed = endTime - startTime;
+                        //startTime = jsonParsed[i]['start'];
+                        //endTime = jsonParsed[i]['end'];
+                        //timeLapsed = endTime - startTime;
                         //5 = Casi morph target O
                         //6 = casi morph target A
                         //7 = casi morph target U
@@ -175,36 +201,26 @@
                         //10 = casi morph target FV
                         //checks if the viseme is included in the vowels array and if it's one letter viseme
                         if(viseme.charAt(1) === "" && vowels.includes(viseme)){
-                            visemeArray.push(viseme);
+                            syncObj.visemeSync.push(viseme);
                             //add the morph target that should be used for each viseme to targets array
-                            if(viseme === 'a'){ targets.push(6); }
-                            else if(viseme === 'o'){ targets.push(5); }
-                            else if(viseme === 'u'){ targets.push(7); }
-                            else if(viseme === 'e'){ targets.push(8); }
-                            else if(viseme === 'i'){ targets.push(9); }
-                            else { targets.push(10); }
+                            if(viseme === 'a'){ syncObj.targetSync.push(6); }
+                            else if(viseme === 'o'){ syncObj.targetSync.push(5); }
+                            else if(viseme === 'u'){ syncObj.targetSync.push(7); }
+                            else if(viseme === 'e'){ syncObj.targetSync.push(8); }
+                            else if(viseme === 'i'){ syncObj.targetSync.push(9); }
+                            else { syncObj.targetSync.push(10); }
+                            
                             //visemeObj.push(viseme);
+                            //targetsArr.push(10)
                         }
                         //moves decimal point 3 decimal places
                         time /= Math.pow(10, 3);
-                        //const rawMaterial = {[`${i}`]: ''};
+                        
                         //if the time we have is not in the timeArray then add it to timeArray
-                        //if(!Object.values(timeObj).includes(time)){
-                            /*if((indx - 1) !== i){
-                                i--;
-                                Object.assign(timeObj, {[`${i}`]: time});
-                                i++;
-                            }*/
-                            //else{
-                        if(!timeArray.includes(time)){
-                        //if(!timeObj.includes(time)){
-                            timeArray.push(time);
-                             //timeObj.push(time);
-                            //Object.assign(timeObj, {[`${i}`]: time});
-                                
-                        //}
-                        //indx = i;
-                        //console.log(indx);       
+                        //if(!timeArr.includes(time)){
+                        if(!syncObj.timeSync.includes(time)){
+                            //timeArr.push(time);
+                            syncObj.timeSync.push(time);
                         }
                         //calls function loop and passes in timeLapsed, againJson, viseme,
                         //and time as parameters.
@@ -215,6 +231,12 @@
                         //if viseme equals u or r then use morphtargetmanager to change mouth to o
                         //return viseme;
                     }
+                    /*const para = document.createElement("p");
+                    para.innerText = syncObj.targetSync;
+                    document.body.appendChild(para);*/
+                    console.log(syncObj.timeSync);
+                    console.log(syncObj.targetSync);
+                    console.log(syncObj.visemeSync);
                 }).catch(error => {throw error});
                /* function processJSON(passJSON, newViseme, newTime, newStartTime, newEndTime){
                             passJSON.value = againJson;
@@ -236,6 +258,7 @@
                 document.getElementById('playButton');*/
             }
           });
+          //return tiSync, viSync, tarSync;
             }
             function soundText(){
                 var speechParams = {
@@ -259,7 +282,8 @@
                     document.getElementById('result').innerHTML = error;
                 } else {
                     document.getElementById('audioSource').src = url;
-                    speechURL.source = url;//set myURL object equal to url to use in createScene function
+                    //speechURL.source = url;//set myURL object equal to url to use in createScene function
+                    soundURL = url;//set soundURL equal to url to use in createScene function
                     document.getElementById('audioPlayback').load();
                     document.getElementById('result').innerHTML = "Speech ready to play.";
                     document.getElementById('playButton');
@@ -267,11 +291,6 @@
             });
             };
 var canvas = document.getElementById("renderCanvas");
-var currentGroup;
-//var lipSync;
-let j = 0;
-var lipPositionProperties;
-
  
 var createScene = function() {
     var scene = new BABYLON.Scene(engine);
@@ -312,9 +331,6 @@ var createScene = function() {
                 var casiInnerMouth = scene.getMeshByName("Casi's Body.001_primitive2");
                 var casiTeeth = scene.getMeshByName("Casi's Teeth");
                 var primitive = scene.getMeshByName("Primitives.001");
-                var secondPrimitive = scene.getMeshByName("Primitives.002");
-                //secondPrimitive.setEnabled(true);
-                //secondPrimitive.visibility = 1;
                 
                 //Gets Casi's Visor and uses visibility to make it see through glass-like material
                 var casiVisor = scene.getMeshByName("Casi's Visor");
@@ -322,44 +338,41 @@ var createScene = function() {
                 casiVisor.visibility = 0.7;
                 
                 //Set up Morph Targets for Casi before the screen is done loading.
-                //let t = 0;
                 var speakButton = document.getElementById("speaker");
                 speakButton.addEventListener("click", function(){
+                //document.getElementById("speaker").onclick=async()=>{
                     console.log("click");
                     speakText();
                     soundText();
-                    
-                    console.log(speechURL);
-                    console.log(timeArray);
-                    console.log(visemeArray);
+                    //console.log(visemeArray);
+                    //console.log(visemeArray.length);
+                    console.log(jsonParsed);
+                    //console.log(timeArray.length);
+                    //console.log(targets.length);
+                    console.log(typeof syncObj.timeSync);
+                    console.log(typeof syncObj);
+                    //console.log(syncObj.timeSync.values());
+                    //console.log(syncObj.visemeSync.values());
+                    //console.log(syncObj.targetSync.values());
+                    console.log(syncObj.visemeSync);
+                    console.log(syncObj.getVisemeData());
                     var milliTimeArray = [];
-                    //timeObj.map()
-                    /*Object.values(timeObj).forEach(key => {
-                        milliTimeArray.push(key);
-                        
-                    });
+                    milliTimeArray.push(syncObj.getVisemeData());
                     console.log(milliTimeArray);
-                    
-                    Object.values(visemeObj).forEach(key => {
-                        milliTimeArray.push(key);
-                        console.log(milliTimeArray);
-                    });*/
-                    /*for(var property in timeObj){
-                        console.log(timeObj[property]);
-                    }*/
                     //5 = Casi morph target O
                     //6 = casi morph target A
                     //7 = casi morph target U
                     //8 = casi morph target E
                     //9 = casi morph target I
                     //10 = casi morph target FV
-                    console.log(targets);
-                    var speech = new BABYLON.Sound("speech", speechURL.source, scene);
-                    console.log(speechURL.source);
-                    j = 0;//reset j back to 0 so we won't get an undefined error message when clicking the button a second time
+                    var speech = new BABYLON.Sound("speech", soundURL, scene);
+                    console.log(speech);
+                    //j = 0;//reset j back to 0 so we won't get an undefined error message when clicking the button a second time
                     speech.play();
+                    console.log("after speech.play()");
+                    let j = 0;
                     const coroutineFunc = function* () {
-                        casiBody.morphTargetManager.getTarget(targets[j]).influence = 1;
+                        casiBody.morphTargetManager.getTarget(targets[j]).influence = 1;//changes the influence from 1 to 0 in back to back frames
 			casiInnerMouth.morphTargetManager.getTarget(targets[j]).influence = 1;
 			yield;
                         console.log(targets[j]);
@@ -368,58 +381,37 @@ var createScene = function() {
 			console.log(targets[j]);
                     };
 
-                    const asynchronousFunc = async function () {
-			for(let scheduledTimeMS = 0, i = 0; i < timeArray.length; i++){
+                    const asynchronousFunc = async function(targetsArray, times, speechSource){
+                        console.log(times);
+                        console.log(syncObj.timeSync);
+                        console.log(timeArray[j]);
+			for(let scheduledTimeMS = 0, i = 0; i < syncObj.timeSync.length; i++, j++){
                             //var start = window.performance.now();
-                            const delay = timeArray[i];
-                            console.log(delay);
+                            console.log(syncObj.targetSync);
+                            const delay = times[i];//get the next value in times array and set equal to delay
+                            //console.log(typeof delay);
                             scheduledTimeMS += delay;
                             console.log(scheduledTimeMS);
-                            await BABYLON.Tools.DelayAsync(scheduledTimeMS);//wait for the amount of milliseconds in the milliTimeArray
-                            await scene.onBeforeRenderObservable.runCoroutineAsync(coroutineFunc());
-                            await BABYLON.Tools.DelayAsync(scheduledTimeMS);
+                            await BABYLON.Tools.DelayAsync(scheduledTimeMS);//wait for the amount of milliseconds in the times Array
+                            await scene.onBeforeRenderObservable.runCoroutineAsync(coroutineFunc());//Go to coroutineFunc and change morph target influence to 1
+                            await BABYLON.Tools.DelayAsync(scheduledTimeMS);//wait for the amount of milliseconds in the times array again
                             //var end = window.performance.now();
                             //console.log(`Execution time: ${end - start} ms`);
-                            j++;
-                            }
-			};
-                    asynchronousFunc();
-                    //var intervalID = setInterval(inter, timeArray[0]);
-                    //intervalID = setInterval(inter, timeArray[indx]);
-                    //visemeArray.forEach(inter);
-                    //Gets every viseme from calling the speakText into the createScene function
-                    //using a setTimeout function so that I give time for the speakText function to
-                    //finish and that the viseme and time variables values won't be undefined
-                    //setTimeout(() => {
-                        //console.log(jsonParsed);
-                        /*for(var i = 0; i < jsonParsed.length; i++){
-                            viseme = jsonParsed[i]['value'];
-                            time = jsonParsed[i]['time'];
-                            //visemeArray.push(viseme);
-                            //setInterval(viseme, time);
-                            //startTime = jsonParsed[i]['start'];
-                            //endTime = jsonParsed[i]['end'];
-                            console.log(viseme);
-                            console.log(time);
-                            //visemeArray.forEach(function(viseme){});
-                            //lipSync = viseme;
-                        }*/
-                        //console.log(visemeArray);
-                        //Array.from(visemeArray).forEach(inter);
-                        //visemeArray.forEach(inter);
-                    //}, 1000);
-                    //var delay = 0;
-                    /*viseme.forEach(function(vise){
-                        setTimeout(function(){
-                            console.log(vise);
-                        }, 1000 + delay);
-                        delay += 1000;
-                    });*/
-                    //viseme.forEach((vise)) =>{setTimeout(() =>{
-                            
-                            
-                    //})}
-                    //setCurrentVowel();
+                            //j++;
+                        }
+		};
+                        /*const coroutineFunc = function* () {
+                            console.log(targets);
+                            casiBody.morphTargetManager.getTarget(targets[j]).influence = 1;
+                            casiInnerMouth.morphTargetManager.getTarget(targets[j]).influence = 1;
+                            yield;
+                            console.log(targets[j]);
+                            casiBody.morphTargetManager.getTarget(targets[j]).influence = 0;
+                            casiInnerMouth.morphTargetManager.getTarget(targets[j]).influence = 0;
+                            console.log(targets[j]);
+                    };*/
+                    asynchronousFunc(syncObj.targetSync, syncObj.timeSync, soundURL);
+                    //console.log("after asynchronousFunc");
                 });
                 //canvas.parentElement.appendChild(speakButton);
                 /*const lipSync = 'a';
@@ -626,10 +618,10 @@ var createScene = function() {
                     console.log("vowelInput done");
                 });*/
 
-                let idx = 0;
-                let index = 0;
+                //let idx = 0;
+                //let index = 0;
                 //var delayTime = timeArray[0];
-                var ind = 0;
+                //var ind = 0;
                 
                 // Change current vowel repeatedly
                 //setTimeout(() => {
@@ -663,11 +655,11 @@ var createScene = function() {
                 //}, delayTime);
             //}, 30);
 
-                scene.onDisposeObservable.add(() => {
+                /*scene.onDisposeObservable.add(() => {
                     clearInterval(inter);
                     console.log("deleted");
                     
-                });
+                });*/
             //});
                 /*scene.onBeforeRenderObservable.add(function(){
                     //casiBody.morphTargetManager.getTarget(1).influence = Math.abs(Math.sin(t));
@@ -732,16 +724,16 @@ window.addEventListener("resize", function () {
     
 //};
 
-function loop(timestamp, passJson, newViseme, newTime){
+/*function loop(timestamp, passJson, newViseme, newTime){
     timestamp.value = timeLapsed;
     passJson.value = againJson;
     newViseme.value = viseme;
     newTime.value = time;
-    /*lipPositionProperties = {
+    lipPositionProperties = {
         "time": timestamp,
         "jsonData": passJson,
         "visemeValue": newViseme
-    };*/ 
+    };*
     //console.log(passJson);
     //console.log(lipPositionProperties);
     console.log(newViseme);
@@ -749,7 +741,7 @@ function loop(timestamp, passJson, newViseme, newTime){
     //console.log(newTime);
     return timestamp, passJson, newViseme, newTime;
     
-};
+};*/
   /* engine.runRenderLoop(function () {
 	
 	scene.render();
