@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>
+            <input autofocus size="23" type="text" id="textEntry" value="It's very good to meet you."/>
+            <button id="speaker" class="btn default">Synthesize</button>
+            <p id="result">Enter text above then click Synthesize</p>
+        </div>
+        <audio id="audioPlayback" controls onplay="asyncFunc()">
+            <source id="audioSource" type="audio/mp3" src="">
+        </audio>
+        <script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.983.0.min.js"></script>
+        <script type="text/javascript" src="config.js"></script>
+        <script>
+        var viseme, time, againJson, jsonParsed;
+        var visemeArray = [];
+        var targets = [];
+        var timeArray = [];
+        const vowels = ['a', 'e', 'o', 'u', 'i', 'f'];
+        const syncObj = {
+            targetSync: [],
+            visemeSync: [],
+            timeSync: [],
+            jsonSync: '',
+            getVisemeData: function(){
+                return this.visemeSync;
+            },
+            setLength: function(){//increments the length of array so array length won't be 0
+                return this.length + 1;
+            }
+        };
+        const dataObj = Object.create(null);
+        
+        function speakText() {
+            
+            // Create the JSON parameters for getSynthesizeSpeechUrl
+            var speechParams = {
+                OutputFormat: "json",
+                SampleRate: "16000",
+                Text: "",
+                TextType: "text",
+                VoiceId: "Joanna",
+                SpeechMarkTypes: ["viseme", "word"]
+            };
+            speechParams.Text = document.getElementById("textEntry").value.toLowerCase(); 
+            
+            // Create the Polly service object and presigner object
+            var polly = new AWS.Polly({apiVersion: '2016-06-10'});
+            var signer = new AWS.Polly.Presigner(speechParams, polly);
+
+            // Create presigned URL of synthesized speech file
+            signer.getSynthesizeSpeechUrl(speechParams, function(error, url) {
+            if (error) {
+                document.getElementById('result').innerHTML = error;
+            } else {
+                console.log(url);
+                fetch(url, headers => 'Content-Type:', 'application/json').then(res => res.text()).then((out) => {
+                    var myJson = "["+out;
+                    //For every index of a end curly bracket } add a comma to the right of it except the last curly bracket.
+                    for(let j = 0; j < myJson.length; j++){
+                        var str = myJson.replace(/(\n)/g,",\n");
+                    }
+                    //Gets the last index of a comma and removes it
+                    var newJson = str.lastIndexOf(",");
+                    str = str.substring(0, newJson);
+                    againJson = str+"]";
+                    jsonParsed = JSON.parse(againJson);
+                    
+                    //empty the contents of visemeObj and timeObj object arrays so I won't still have the previous contents I got from last button click 
+                    for(let i = 0; i < jsonParsed.length; i++){
+                        viseme = jsonParsed[i]['value'];
+                        time = jsonParsed[i]['time'];
+                        //startTime = jsonParsed[i]['start'];
+                        //endTime = jsonParsed[i]['end'];
+                        //timeLapsed = endTime - startTime;
+                        //5 = Casi morph target O
+                        //6 = casi morph target A
+                        //7 = casi morph target U
+                        //8 = casi morph target E
+                        //9 = casi morph target I
+                        //10 = casi morph target FV
+                        //checks if the viseme is included in the vowels array and if it's one letter viseme
+                        if(viseme.charAt(1) === "" && vowels.includes(viseme)){
+                            visemeArray.push(viseme);
+                            //visemeArr.push(viseme);
+                            syncObj.visemeSync.push(viseme);
+                            /*Object.defineProperty(dataObj, i, {
+                                value: viseme,
+                                writable: false,
+                                enumerable: true,
+                                configurable: false
+                            });*/
+                            //visemeArray.push(viseme);
+                            //visemeArray.push(viseme);
+                            //add the morph target that should be used for each viseme to targets array
+                            /*if(viseme === 'a'){ targArray.push(6); }
+                            else if(viseme === 'o'){ targArray.push(5); }
+                            else if(viseme === 'u'){ targArray.push(7); }
+                            else if(viseme === 'e'){ targArray.push(8); }
+                            else if(viseme === 'i'){ targArray.push(9); }
+                            else { targArray.push(10); }
+                            
+                            if(viseme === 'a'){ syncObj.targetSync.push(6); }
+                            else if(viseme === 'o'){ syncObj.targetSync.push(5); }
+                            else if(viseme === 'u'){ syncObj.targetSync.push(7); }
+                            else if(viseme === 'e'){ syncObj.targetSync.push(8); }
+                            else if(viseme === 'i'){ syncObj.targetSync.push(9); }
+                            else { syncObj.targetSync.push(10); }*/
+                            
+                            if(viseme === 'a'){ targets.push(6); }
+                            else if(viseme === 'o'){ targets.push(5); }
+                            else if(viseme === 'u'){ targets.push(7); }
+                            else if(viseme === 'e'){ targets.push(8); }
+                            else if(viseme === 'i'){ targets.push(9); }
+                            else { targets.push(10); }
+                        }
+                        //moves decimal point 3 decimal places
+                        time /= Math.pow(10, 3);
+                        
+                        //if the time we have is not in the timeArray then add it to timeArray
+                        //if(!times.includes(time)){
+                        if(!timeArray.includes(time)){
+                            timeArray.push(time);
+                            //times.push(time);
+                            //syncObj.timeSync.push(time);
+                        }
+                        
+                        //calls function loop and passes in timeLapsed, againJson, viseme,
+                        //and time as parameters.
+                        //loop(timeLapsed, againJson, viseme, time);
+                    }
+                    syncObj.jsonSync = JSON.stringify((syncObj));
+                    //console.log(JSON.stringify(syncObj));
+                    console.log(syncObj.jsonSync);
+                    console.log(dataObj);
+                    syncObj.setLength(syncObj.targetSync.length);
+                    console.log(syncObj);
+                }).catch(error => {throw error});
+                
+            }
+          });
+            }
+            function soundText(){
+                var speechParams = {
+                    OutputFormat: "mp3",
+                    //OutputS3BucketName: "casi-bucket",
+                    SampleRate: "16000",
+                    Text: "",
+                    TextType: "text",
+                    VoiceId: "Joanna"
+                    
+                };
+                speechParams.Text = document.getElementById("textEntry").value.toLowerCase(); 
+
+                // Create the Polly service object and presigner object
+                var polly = new AWS.Polly({apiVersion: '2016-06-10'});
+                var signer = new AWS.Polly.Presigner(speechParams, polly);
+
+                // Create presigned URL of synthesized speech file
+                signer.getSynthesizeSpeechUrl(speechParams, function(error, url) {
+                if (error) {
+                    document.getElementById('result').innerHTML = error;
+                } else {
+                    document.getElementById('audioSource').src = url;
+                    //speechURL.source = url;//set myURL object equal to url to use in createScene function
+                    soundURL = url;//set soundURL equal to url to use in createScene function
+                    document.getElementById('audioPlayback').load();
+                    document.getElementById('result').innerHTML = "Speech ready to play.";
+                    document.getElementById('playButton');
+                    console.log(soundURL);
+                }
+            });
+            };
+        
+            const speakButton = document.getElementById("speaker");
+            speakButton.addEventListener("click", function(){
+                speakText();
+                soundText();
+            });
+            //speakButton.addEventListener("click", soundText());
+            //speakButton.addEventListener("click", asyncFunc());
+            
+            function asyncFunc(){
+                console.log(targets);
+                console.log(visemeArray);
+                console.log(timeArray);
+                console.log(timeArray.length);
+                //console.log(document.getElementById("getURL").src);
+                for(let i = 0; i < timeArray.length; i++){
+                    console.log(timeArray[i]);
+                    console.log(timeArray.length);
+                }
+            }
+            console.log(timeArray.length);
+            
+            //speakButton.addEventListener("click", asyncFunc());
+            //speakButton.addEventListener("click", function(){
+                //speakText(timeArray, visemeArray, targets);
+                //speakText.call(timeArray, visemeArray, targets);
+                //soundText();
+                
+                //console.log(JSON.stringify((dataObj, null, 4)));
+                //timeArray.forEach(element => console.log(element));//{
+                    
+                //});
+                
+                //timeArray.forEach(function(list, item){})
+            //});
+            // Function invoked by button click
+        
+        </script>
+    </body>
+</html>
