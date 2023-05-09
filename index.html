@@ -22,6 +22,7 @@
         <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
         <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!--<script src="C:\Users\Chris\Desktop\Casi_Archive\Casi_on_Desktop\Casi.py"></script>-->
         
         <!-- Text to speech Dependency -->
         <script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.983.0.min.js"></script>
@@ -112,15 +113,7 @@
         //const fs = require(['fs']);
         var viseme, time, startTime, endTime;
         var passJSON, againJson, timeLapsed, jsonParsed;
-        //var visemeArray = [];
-        //var visemeArray = new Array();
-        //var soundURL = "";
-        var speechURL = {
-            source: ''
-        };
-        var visemeObj = {};
-        var timeObj = {};
-        var targetsObj = {};
+       
         class dataArray {
             constructor() {
               this.length = 0;
@@ -156,8 +149,6 @@
         var targets = [];
         const vowels = ['a', 'e', 'o', 'u', 'i', 'f'];
         var visemeArray = [];
-        const visemeArr = new dataArray();
-        //let visemeArray = Object.create(Object.prototype);
         
         //figure out a way to pass parameters by reference
         // Function invoked by button click
@@ -195,6 +186,7 @@
                     str = str.substring(0, newJson);
                     againJson = str+"]";
                     jsonParsed = JSON.parse(againJson);
+                    console.log(jsonParsed);
                     //empty the contents of visemeObj and timeObj object arrays so I won't still have the previous contents I got from last button click 
                     for(let i = 0; i < jsonParsed.length; i++){
                         viseme = jsonParsed[i]['value'];
@@ -209,7 +201,8 @@
                         //9 = casi morph target I
                         //10 = casi morph target FV
                         //checks if the viseme is included in the vowels array and if it's one letter viseme
-                        if(viseme.charAt(1) === "" && vowels.includes(viseme)){
+                        //if(viseme.charAt(1) === "" && vowels.includes(viseme)){
+                        if(viseme.charAt(1) === ""){
                             visemeArray.push(viseme);
                             //add the morph target that should be used for each viseme to targets array
                             if(viseme === 'a'){ targets.push(6); }
@@ -259,12 +252,10 @@
                     document.getElementById('result').innerHTML = error;
                 } else {
                     document.getElementById('audioSource').src = url;
-                    //speechURL.source = url;//set myURL object equal to url to use in createScene function
-                    //soundURL = url;//set soundURL equal to url to use in createScene function
                     document.getElementById('audioPlayback').load();
                     document.getElementById('result').innerHTML = "Speech ready to play.";
                     document.getElementById('playButton');
-                    //console.log(soundURL);
+                    console.log(url);
                 }
             });
             };
@@ -280,14 +271,14 @@ var createScene = function() {
     var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, scene);
     ground.receiveShadows = true;
                
-	var URL;
-	var fileName;
+	//const URL;
+	//const fileName;
         
-        URL = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
-        fileName = "project.blend1(UPDATED).gltf";
+        const URL = 'https://raw.githubusercontent.com/chris45242/BabylonModel/main/';
+        const fileName = "project.blend1(UPDATED).gltf";
         
         //adds a background to the scene
-        var layer = new BABYLON.Layer('', URL + "Cyber_Background.jpg", scene, true);
+        const layer = new BABYLON.Layer('', URL + "Cyber_Background.jpg", scene, true);
    
         const Casi = BABYLON.SceneLoader.Append(URL, fileName, scene, function (scene){
                 // Create a default arc rotate camera and light.
@@ -349,6 +340,8 @@ var createScene = function() {
                     console.log("after speech.play()");
                     let j = 0;
                     const coroutineFunc = function* () {
+                        console.log(engine.getFps().toFixed());//gets the amount of frames per second
+                        console.log("Current target is: ", targets[j]);
                         casiBody.morphTargetManager.getTarget(targets[j]).influence = 1;//changes the influence from 1 to 0 in back to back frames
 			casiInnerMouth.morphTargetManager.getTarget(targets[j]).influence = 1;
 			yield;
@@ -363,10 +356,10 @@ var createScene = function() {
                         console.log(timeArray[j]);
                         console.log(timeArray.length);
 			for(let scheduledTimeMS = 0, i = 0; i < timeArray.length; i++, j++){
+                        //for(let scheduledTimeMS = 0, i = 0; i < targets.length; i++, j++){
                             //var start = window.performance.now();
                             console.log(timeArray[i]);
                             const delay = timeArray[i];//get the next value in times array and set equal to delay
-                            //console.log(typeof delay);
                             scheduledTimeMS += delay;
                             console.log(scheduledTimeMS);
                             await BABYLON.Tools.DelayAsync(scheduledTimeMS);//wait for the amount of milliseconds in the times Array
@@ -641,6 +634,7 @@ var createScene = function() {
                     
                 });*/
             //});
+                //Makes it so that Casi can blink
                 let inf = 0;	
 		scene.onBeforeRenderObservable.add(async function(){
                     casiBody.morphTargetManager.getTarget(0).influence = Math.abs(Math.sin(inf));
