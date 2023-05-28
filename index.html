@@ -113,24 +113,7 @@
         //const fs = require(['fs']);
         var viseme, time, startTime, endTime;
         var passJSON, againJson, timeLapsed, jsonParsed;
-       
-        class dataArray {
-            constructor() {
-              this.length = 0;
-              this.data = {};//Object to store the elements
-            }
-            push(element){
-              this.data[this.length] = element;
-              this.length++;
-              return this.length;
-            }
-            getData(){
-                
-            }
-          }
-        /*const dataArray = {
-            d: 0
-        };*/
+        
         const syncObj = {
             targetSync: [],
             visemeSync: [],
@@ -153,14 +136,13 @@
         //figure out a way to pass parameters by reference
         // Function invoked by button click
         function speakText() {
-            
             // Create the JSON parameters for getSynthesizeSpeechUrl
             var speechParams = {
                 OutputFormat: "json",
                 SampleRate: "16000",
                 Text: "",
                 TextType: "text",
-                VoiceId: "Joanna",
+                VoiceId: "Mizuki",
                 SpeechMarkTypes: ["viseme", "word"]
             };
             speechParams.Text = document.getElementById("textEntry").value.toLowerCase(); 
@@ -206,7 +188,7 @@
                             visemeArray.push(viseme);
                             //add the morph target that should be used for each viseme to targets array
                             if(viseme === 'a'){ targets.push(6); }
-                            else if(viseme === 'o'){ targets.push(5); }
+                            else if(viseme === 'o' || viseme === 'r'){ targets.push(5); }
                             else if(viseme === 'u'){ targets.push(7); }
                             else if(viseme === 'e'){ targets.push(8); }
                             else if(viseme === 'i'){ targets.push(9); }
