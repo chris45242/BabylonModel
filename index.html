@@ -126,8 +126,6 @@
                 return this.length + 1;
             }
         };
-        //var timeArray = new Array();
-        //var targets = new Array();
         var timeArray = [];
         var targets = [];
         const vowels = ['a', 'e', 'o', 'u', 'i', 'f'];
@@ -176,12 +174,6 @@
                         //startTime = jsonParsed[i]['start'];
                         //endTime = jsonParsed[i]['end'];
                         //timeLapsed = endTime - startTime;
-                        //5 = Casi morph target O
-                        //6 = casi morph target A
-                        //7 = casi morph target U
-                        //8 = casi morph target E
-                        //9 = casi morph target I
-                        //10 = casi morph target FV
                         //checks if the viseme is included in the vowels array and if it's one letter viseme
                         //if(viseme.charAt(1) === "" && vowels.includes(viseme)){
                         if(viseme.charAt(1) === ""){
@@ -327,7 +319,7 @@ var createScene = function() {
                         casiBody.morphTargetManager.getTarget(targets[j]).influence = 1;//changes the influence from 1 to 0 in back to back frames
 			casiInnerMouth.morphTargetManager.getTarget(targets[j]).influence = 1;
 			yield;
-                        console.log(targets[j]);
+                        console.log(targets);
 			casiBody.morphTargetManager.getTarget(targets[j]).influence = 0;
 			casiInnerMouth.morphTargetManager.getTarget(targets[j]).influence = 0;
 			console.log(targets[j]);
@@ -350,6 +342,7 @@ var createScene = function() {
                             //var end = window.performance.now();
                             //console.log(`Execution time: ${end - start} ms`);
                         }
+                        //create something that will empty out the viseme and targets arrays so that the lip positions from the previous animation won't be included in the next one
 		};
                         /*const coroutineFunc = function* () {
                             console.log(targets);
