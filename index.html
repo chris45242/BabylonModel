@@ -22,6 +22,7 @@
         <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
         <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        
         <!--<script src="C:\Users\Chris\Desktop\Casi_Archive\Casi_on_Desktop\Casi.py"></script>-->
         
         <!-- Text to speech Dependency -->
@@ -113,6 +114,7 @@
         //const fs = require(['fs']);
         var viseme, time, startTime, endTime;
         var passJSON, againJson, timeLapsed, jsonParsed;
+        const pythonURL = "https://raw.githubusercontent.com/chris45242/BabylonModel/main/Casi(TEST_FOR_JAVASCRIPT_VERSION_OF_CASI).py";
         
         const syncObj = {
             targetSync: [],
@@ -133,6 +135,14 @@
         
         //figure out a way to pass parameters by reference
         // Function invoked by button click
+        $.ajax({
+            type: "GET",
+            url: pythonURL,
+            //data: {param: text}
+        }).done(function(out){
+            console.log(out);
+        });
+        
         function speakText() {
             // Create the JSON parameters for getSynthesizeSpeechUrl
             var speechParams = {
